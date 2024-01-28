@@ -1,23 +1,25 @@
-# fazer lista com as palavras que devem ser encontradas
+import random
+
+# lista com as palavras que devem ser encontradas
 palavras = ["amor", "paz", "raiva", "python", "lar"]
 
-# criando as linhas da matriz
-lista1 = ['a', 'b', 'c', 'd', 'e', 'f']
-lista2 = ['a', 'b', 'c', 'd', 'e', 'f']
-lista3 = ['a', 'b', 'c', 'd', 'e', 'f']
-lista4 = ['a', 'b', 'c', 'd', 'e', 'f']
-lista5 = ['a', 'b', 'c', 'd', 'e', 'f']
-lista6 = ['a', 'b', 'c', 'd', 'e', 'f']
+# lista com as letras do alfabeto
+letras = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+          'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+          'u', 'v', 'w', 'x', 'y', 'z']
 
-# criando a matriz utilizando as listas
-matriz = [
-    lista1,
-    lista2,
-    lista3,
-    lista4,
-    lista5,
-    lista6
-]
+# definindo tamanho da matriz
+tamanho_linhas_matriz = 6
+tamanho_colunas_matriz = 6
+
+# criando a matriz com letras aleatorias
+matriz = []
+for numero_linha in range(0, tamanho_colunas_matriz):
+    linha = []
+    for numero_coluna in range(0, tamanho_linhas_matriz):
+        letra_aleatoria = random.choice(letras)
+        linha.append(letra_aleatoria)
+    matriz.append(linha)
 
 # colocando as palavras na matriz
 linha_matriz = 0
@@ -28,6 +30,6 @@ for palavra in palavras:
         coluna_matriz += 1
     linha_matriz += 1
 
-# pritando a matriz
+# printando a matriz
 for x in matriz:
     print(x)

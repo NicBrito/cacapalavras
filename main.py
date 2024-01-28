@@ -7,17 +7,25 @@ tamanho_colunas_matriz = tamanho_matriz
 
 # criando lista de palavras
 palavras = []
-print("Você deve digitar até ", tamanho_matriz, " palavras de tamanho ", tamanho_matriz)
+print("Você deve digitar até", tamanho_matriz,"palavras com no máximo", tamanho_matriz,"letras")
 for x in range(0, tamanho_matriz):
+    sair = 0
     digite_palavra = 1
     while(digite_palavra == 1):
         palavra_digitada = str(input(f'Digite a {x+1}a palavra: '))
-        if(len(palavra_digitada) <= tamanho_matriz):
-            palavras.append(palavra_digitada)
-            digite_palavra = 0
+        palavra_digitada = palavra_digitada.replace(" ", "")
+        if not palavra_digitada or palavra_digitada.replace(" ", "") == "":
+            sair = 1
+            break
         else:
-            print("A palavra possui um tamanho não permitido!")
-            digite_palavra = 1
+            if(len(palavra_digitada) <= tamanho_matriz):
+                palavras.append(palavra_digitada)
+                digite_palavra = 0
+            else:
+                print("A palavra possui um tamanho não permitido!")
+                digite_palavra = 1
+    if(sair == 1):
+        break
 
 # lista com as letras do alfabeto
 letras = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',

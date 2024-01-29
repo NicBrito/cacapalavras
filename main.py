@@ -8,11 +8,11 @@ tamanho_colunas_matriz = tamanho_matriz
 # criando lista de palavras
 palavras = []
 print("Você deve digitar até", tamanho_matriz,"palavras com no máximo", tamanho_matriz,"letras")
-for x in range(0, tamanho_matriz):
+for indice_palavra in range(0, tamanho_matriz):
     sair = 0
     digite_palavra = 1
     while(digite_palavra == 1):
-        palavra_digitada = str(input(f'Digite a {x+1}a palavra: '))
+        palavra_digitada = str(input(f'Digite a {indice_palavra+1}a palavra: '))
         palavra_digitada = palavra_digitada.replace(" ", "")
         if not palavra_digitada or palavra_digitada.replace(" ", "") == "":
             sair = 1
@@ -42,14 +42,36 @@ for numero_linha in range(0, tamanho_colunas_matriz):
     matriz.append(linha)
 
 # colocando as palavras na matriz
-linha_matriz = 0
 for palavra in palavras:
-    coluna_matriz = 0
-    for letra in palavra:
-        matriz[linha_matriz][coluna_matriz] = letra
-        coluna_matriz += 1
-    linha_matriz += 1
+    tamanho_palavra = len(palavra)
+    direcao = random.choice(["horizontal", "vertical", "diagonal_para_direita", "diagonal_para_esquerda"])
+    if(direcao == "horizontal"):
+        linha_palavra = random.randint(0, tamanho_colunas_matriz-1)
+        coluna_palavra = random.randint(0, tamanho_linhas_matriz-tamanho_palavra)
+        for letra in palavra:
+            matriz[linha_palavra][coluna_palavra] = letra
+            coluna_palavra += 1
+    elif(direcao == "vertical"):
+        linha_palavra = random.randint(0, tamanho_colunas_matriz-tamanho_palavra)
+        coluna_palavra = random.randint(0, tamanho_linhas_matriz-1)
+        for letra in palavra:
+            matriz[linha_palavra][coluna_palavra] = letra
+            linha_palavra += 1
+    elif(direcao == "diagonal_para_direita"):
+        linha_palavra = random.randint(0, tamanho_colunas_matriz-tamanho_palavra)
+        coluna_palavra = random.randint(0, tamanho_linhas_matriz-tamanho_palavra)
+        for letra in palavra:
+            matriz[linha_palavra][coluna_palavra] = letra
+            linha_palavra += 1
+            coluna_palavra += 1
+    elif(direcao == "diagonal_para_esquerda"):
+        linha_palavra = random.randint(0, tamanho_colunas_matriz-tamanho_palavra)
+        coluna_palavra = random.randint(tamanho_palavra-1, tamanho_linhas_matriz-1)
+        for letra in palavra:
+            matriz[linha_palavra][coluna_palavra] = letra
+            linha_palavra += 1
+            coluna_palavra -= 1
 
 # printando a matriz
-for x in matriz:
-    print(x)
+for linha in matriz:
+    print(linha)

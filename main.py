@@ -49,6 +49,7 @@ for palavra in palavras:
     if(direcao == "horizontal"):
         escolher_posicao = True
         while(escolher_posicao == True):
+            print()
             for linha in matriz:
                 print(linha)
             # escolhendo posicao aleatoria para a palavra
@@ -61,16 +62,53 @@ for palavra in palavras:
             for indice in range(0, tamanho_palavra):
                 palavra_existente += matriz[linha_checagem][coluna_checagem]
                 coluna_checagem += 1
-            print(palavra_existente)
+            print("\nPALAVRA EXISTENTE:", palavra_existente)
             # checar se a palavra não vai sobrepor outra palavra
             palavra_existe = False
+            finalizar_checagem = False
             palavras_checagem = palavras
             for palavra_checagem in palavras_checagem:
-                palavra_existe = palavra_existente in palavra_checagem
-                print(palavra_existente, "->", palavra_checagem, "=", palavra_existe)
-                input()
-                if palavra_existe == True:
-                    break
+                if finalizar_checagem == False:
+                    palavra_existe = palavra_existente in palavra_checagem
+                    print("\n", palavra_checagem, "\n", palavra_existente, "->", palavra_checagem, "=", palavra_existe)
+                    if palavra_existe == True:
+                        break
+                    else:
+                        # checando sequência de letras a partir do começo da palavra existente
+                        direcao_checagem = "esquerda"
+                        coluna_direcao_checagem = coluna_palavra
+                        palavra_checagem_sequencial = palavra_existente[0]
+                        print("PRIMEIRA LETRA CHECAGEM SEQUENCIAL:", palavra_checagem_sequencial, "\nCOLUNA DIRECAO CHECAGEM:", coluna_direcao_checagem)
+                        while finalizar_checagem == False and palavra_checagem_sequencial in palavra_checagem and len(palavra_checagem_sequencial) <= len(palavras_checagem):
+                            if direcao_checagem == "esquerda":
+                                print("DIRECAO CHECAGEM:", direcao_checagem)
+                                if coluna_direcao_checagem > 0:
+                                    coluna_direcao_checagem -= 1
+                                    palavra_checagem_sequencial = matriz[linha_palavra][coluna_direcao_checagem] + palavra_checagem_sequencial
+                                    print("PALAVRA CHECAGEM SEQUENCIAL:", palavra_checagem_sequencial, "\nCOLUNA DIRECAO CHECAGEM:", coluna_direcao_checagem)
+                                elif palavra_checagem_sequencial[0] == palavra_checagem[0]:
+                                    direcao_checagem = "direita"
+                                    print("MANDANDO PARA A DIREITA")
+                                else:
+                                    palavra_existe = False
+                                    finalizar_checagem = True
+                                    print("FINALIZANDO CHECAGEM")
+                            if direcao_checagem == "direita":
+                                coluna_direcao_checagem += len(palavra_checagem_sequencial)
+                                print("DIRECAO CHECAGEM:", direcao_checagem)
+                                print("PALAVRA CHECAGEM SEQUENCIAL (chegando):", palavra_checagem_sequencial, "\nCOLUNA DIRECAO CHECAGEM:", coluna_direcao_checagem)
+                                if coluna_direcao_checagem < tamanho_linhas_matriz:
+                                    palavra_checagem_sequencial += matriz[linha_palavra][coluna_direcao_checagem]
+                                    print("PALAVRA CHECAGEM SEQUENCIAL:", palavra_checagem_sequencial, "\nCOLUNA DIRECAO CHECAGEM:", coluna_direcao_checagem)
+                                elif palavra_checagem_sequencial == palavra_checagem:
+                                    palavra_existe = True
+                                    finalizar_checagem = True
+                                    print("FINALIZANDO CHECAGEM")
+                                else:
+                                    palavra_existe = False
+                                    finalizar_checagem = True
+                                    print("FINALIZANDO CHECAGEM")
+                        # checando sequência de letras a partir do fim da palavra existente
             # se a palavra for sobrescrever outra, escolher nova posicao
             if(palavra_existe == True):
                 escolher_posicao = True

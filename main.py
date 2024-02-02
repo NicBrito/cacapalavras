@@ -57,6 +57,10 @@ def criar_palavras(tamanho_matriz):
     return palavras
 
 # função para checar sobreposição de palavras na horizontal
+def checar_sobreposicao_palavras_na_horizontal(matriz, palavras, palavra, tamanho_matriz, tamanho_linhas_matriz, tamanho_colunas_matriz, linha_palavra, coluna_palavra, palavra_existente_na_posicao):
+    # checar se a palavra não vai sobrepor outra palavra
+    return False
+
 # def checar_sobreposicao_palavras_na_horizontal(matriz, palavras, tamanho_linhas_matriz, tamanho_colunas_matriz):
 #     escolher_posicao = True
 #     while(escolher_posicao == True):
@@ -223,19 +227,42 @@ def criar_palavras(tamanho_matriz):
 
 # função para checar sobreposição de palavras na diagonal para a esquerda
 
-# função para colocar as palavras na horizontal
-
-def colocar_palavras_na_horizontal(matriz, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz):
-    # escolhendo posicao aleatoria para a palavra
-    linha_palavra = random.randint(0, tamanho_colunas_matriz-1)
-    coluna_palavra = random.randint(0, tamanho_linhas_matriz-tamanho_palavra)
-    # colocando a palavra na matriz
-    for letra in palavra:
-        matriz[linha_palavra][coluna_palavra] = letra
+# função para pegar a palavra que já existe na horizontal
+def checar_palavra_existente_horizontal(matriz, tamanho_palavra, linha_palavra, coluna_palavra):
+    palavra_existente_na_posicao = ""
+    for indice in range(0, tamanho_palavra):
+        palavra_existente_na_posicao += matriz[linha_palavra][coluna_palavra]
         coluna_palavra += 1
+    return palavra_existente_na_posicao
+
+# função para colocar as palavras na horizontal
+def colocar_palavras_na_horizontal(matriz, palavras, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz):
+    # permitir a escolha de uma posição para a palavra
+    escolher_posicao = True
+    # caso deva escolher uma nova posição para a palavra
+    while(escolher_posicao == True):
+        # escolhendo posicao aleatoria para a palavra
+        linha_palavra = random.randint(0, tamanho_colunas_matriz-1)
+        coluna_palavra = random.randint(0, tamanho_linhas_matriz-tamanho_palavra)
+        # checar palavra que já existe nessa posição na matriz
+        palavra_existente_na_posicao = checar_palavra_existente_horizontal(matriz, tamanho_palavra, linha_palavra, coluna_palavra)
+        # checar se a palavra vai sobrepor outra palavra
+        palavra_vai_sobrepor_outra = checar_sobreposicao_palavras_na_horizontal(matriz, palavras, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, linha_palavra, coluna_palavra, palavra_existente_na_posicao)
+        # se a palavra for sobrescrever outra, escolher nova posicao
+        if(palavra_vai_sobrepor_outra == True):
+            # permitir a escolha de uma nova posição para a palavra
+            escolher_posicao = True
+        # se a palavra não for sobrescrever outra, colocar na matriz
+        else:
+            # não permitir a escolha de uma nova posição para a palavra
+            escolher_posicao = False
+            # colocando a palavra na matriz
+            for letra in palavra:
+                matriz[linha_palavra][coluna_palavra] = letra
+                coluna_palavra += 1
 
 # função para colocar as palavras na vertical
-def colocar_palavras_na_vertical(matriz, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz):
+def colocar_palavras_na_vertical(matriz, palavras, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz):
     # escolhendo posicao aleatoria para a palavra
     linha_palavra = random.randint(0, tamanho_colunas_matriz-tamanho_palavra)
     coluna_palavra = random.randint(0, tamanho_linhas_matriz-1)
@@ -245,7 +272,7 @@ def colocar_palavras_na_vertical(matriz, palavra, tamanho_palavra, tamanho_linha
         linha_palavra += 1
 
 # função para colocar as palavras na diagonal para a direita
-def colocar_palavras_na_diagonal_para_direita(matriz, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz):
+def colocar_palavras_na_diagonal_para_direita(matriz, palavras, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz):
     # escolhendo posicao aleatoria para a palavra
     linha_palavra = random.randint(0, tamanho_colunas_matriz-tamanho_palavra)
     coluna_palavra = random.randint(0, tamanho_linhas_matriz-tamanho_palavra)
@@ -256,7 +283,7 @@ def colocar_palavras_na_diagonal_para_direita(matriz, palavra, tamanho_palavra, 
         coluna_palavra += 1
 
 # função para colocar as palavras na diagonal para a esquerda
-def colocar_palavras_na_diagonal_para_esquerda(matriz, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz):
+def colocar_palavras_na_diagonal_para_esquerda(matriz, palavras, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz):
     # escolhendo posicao aleatoria para a palavra
     linha_palavra = random.randint(0, tamanho_colunas_matriz-tamanho_palavra)
     coluna_palavra = random.randint(tamanho_palavra-1, tamanho_linhas_matriz-1)
@@ -278,19 +305,19 @@ def colocar_palavras_na_matriz(matriz, palavras, tamanho_linhas_matriz, tamanho_
         # se a direcao for horizontal
         if(direcao == "horizontal"):
             # chamar a função para colocar a palavra na horizontal
-            colocar_palavras_na_horizontal(matriz, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz)
+            colocar_palavras_na_horizontal(matriz, palavras, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz)
         # se a direcao for vertical
         elif(direcao == "vertical"):
             # chamar a função para colocar a palavra na vertical
-            colocar_palavras_na_vertical(matriz, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz)
+            colocar_palavras_na_vertical(matriz, palavras, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz)
         # se a direcao for diagonal para a direita
         elif(direcao == "diagonal_para_direita"):
             # chamar a função para colocar a palavra na diagonal para a direita
-            colocar_palavras_na_diagonal_para_direita(matriz, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz)
+            colocar_palavras_na_diagonal_para_direita(matriz, palavras, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz)
         # se a direcao for diagonal para a esquerda
         elif(direcao == "diagonal_para_esquerda"):
             # chamar a função para colocar a palavra na diagonal para a esquerda
-            colocar_palavras_na_diagonal_para_esquerda(matriz, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz)
+            colocar_palavras_na_diagonal_para_esquerda(matriz, palavras, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz)
 
 # função principal
 def main():

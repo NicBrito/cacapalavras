@@ -68,34 +68,32 @@ def criar_palavras(tamanho_matriz):
             break # finalizando a digitação de palavras
     return palavras # retornando lista de palavras
 
-# função para checar sobreposição de palavras na matriz
-def checar_sobreposicao_palavras(matriz, palavras, palavra, direcao, tamanho_matriz, tamanho_linhas_matriz, tamanho_colunas_matriz, linha_palavra, coluna_palavra, palavra_existente_na_posicao):
-    if(direcao == "horizontal"): # caso a direção seja horizontal
-        pass
-    elif(direcao == "vertical"): # caso a direção seja vertical
-        pass
-    elif(direcao == "diagonal_para_direita"): # caso a direção seja diagonal para a direita
-        pass
-    elif(direcao == "diagonal_para_esquerda"): # caso a direção seja diagonal para a esquerda
-        pass
+# função para checagem avançada de sobreposição de palavras
+def checar_sobreposicao_palavras_avancada(matriz, palavras, palavra, direcao, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, linha_palavra, coluna_palavra, palavra_existente_na_matriz):
+    pass
 
-# def checar_sobreposicao_palavras_na_horizontal(matriz, palavras, tamanho_linhas_matriz, tamanho_colunas_matriz):
-#     escolher_posicao = True
-#     while(escolher_posicao == True):
-#         print()
-#         for linha in matriz:
-#             print(linha)
-#         # escolhendo posicao aleatoria para a palavra
-#         linha_palavra = random.randint(0, tamanho_colunas_matriz-1)
-#         coluna_palavra = random.randint(0, tamanho_linhas_matriz-tamanho_palavra)
-#         # checar palavra que já existe na matriz
-#         palavra_existente = ""
-#         linha_checagem = linha_palavra
-#         coluna_checagem = coluna_palavra
-#         for indice in range(0, tamanho_palavra):
-#             palavra_existente += matriz[linha_checagem][coluna_checagem]
-#             coluna_checagem += 1
-#         print("\nPALAVRA EXISTENTE:", palavra_existente)
+# função para checar se a palavra da matriz existe na lista de palavras
+def checar_palavra_da_matriz_na_lista_de_palavras(palavra_existente_na_matriz, palavras):
+    faz_parte_de_alguma_palavra = False # criando variável para checar se a palavra da matriz faz parte de alguma palavra da lista
+    for palavra in palavras: # percorrendo a lista de palavras
+        if palavra_existente_na_matriz in palavra: # checando se a palavra da matriz faz parte de alguma palavra da lista
+            faz_parte_de_alguma_palavra = True # informando que a palavra da matriz faz parte de alguma palavra da lista
+            break # finalizando a checagem
+    return faz_parte_de_alguma_palavra # retornando se a palavra da matriz faz parte de alguma palavra da lista
+
+# função para checar sobreposição de palavras na matriz
+def checar_sobreposicao_palavras(matriz, palavras, palavra, direcao, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, linha_palavra, coluna_palavra, palavra_existente_na_matriz):
+    # checar se a palavra existente na matriz faz parte de alguma palavra da lista
+    faz_parte_de_alguma_palavra = checar_palavra_da_matriz_na_lista_de_palavras(palavra_existente_na_matriz, palavras)
+    # se a palavra existente na matriz fizer parte de alguma palavra da lista
+    if(faz_parte_de_alguma_palavra == True):
+        return True # retornar que a palavra vai sobrepor outra palavra
+    # se a palavra existente na matriz não fizer parte de nenhuma palavra da lista
+    else:
+        # realizar checagem avançada de sobreposição de palavras
+        faz_parte_de_alguma_palavra = checar_sobreposicao_palavras_avancada(matriz, palavras, palavra, direcao, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, linha_palavra, coluna_palavra, palavra_existente_na_matriz)
+        return faz_parte_de_alguma_palavra # retornar se a palavra vai sobrepor outra palavra
+
 #         # checar se a palavra não vai sobrepor outra palavra
 #         palavra_existe = False
 #         finalizar_checagem = False
@@ -229,15 +227,6 @@ def checar_sobreposicao_palavras(matriz, palavras, palavra, direcao, tamanho_mat
 #                     print("FINALIZAR CHECAGEM:", finalizar_checagem)
 #                     print("PALAVRA CHECAGEM SEQ. IN PALAVRA CHECAGEM:", palavra_checagem_sequencial in palavra_checagem)
 #                     print("TAM. PALAVRA CHECAGEM SEQ. <= TAM. PALAVRA CHECAGEM:", len(palavra_checagem_sequencial) <= len(palavra_checagem))
-#         # se a palavra for sobrescrever outra, escolher nova posicao
-#         if(palavra_existe == True):
-#             escolher_posicao = True
-#         # se a palavra não for sobrescrever outra, colocar na matriz
-#         else:
-#             escolher_posicao = False
-#             for letra in palavra:
-#                 matriz[linha_palavra][coluna_palavra] = letra
-#                 coluna_palavra += 1
 
 # função para pegar a palavra que já existe na matriz
 def checar_palavra_existente_na_matriz(matriz, direcao, tamanho_palavra, linha_palavra, coluna_palavra):
@@ -248,11 +237,22 @@ def checar_palavra_existente_na_matriz(matriz, direcao, tamanho_palavra, linha_p
             palavra_existente_na_posicao += matriz[linha_palavra][coluna_palavra]
             coluna_palavra += 1 # selecionado próxima coluna para pegar a próxima letra da palavra
     elif(direcao == "vertical"): # caso a direção seja vertical
-        pass
+        for indice in range(0, tamanho_palavra): # percorrendo a quantidade de letras da palavra
+            # adicionando a letra existente na matriz
+            palavra_existente_na_posicao += matriz[linha_palavra][coluna_palavra]
+            linha_palavra += 1
     elif(direcao == "diagonal_para_direita"): # caso a direção seja diagonal para a direita
-        pass
+        for indice in range(0, tamanho_palavra): # percorrendo a quantidade de letras da palavra
+            # adicionando a letra existente na matriz
+            palavra_existente_na_posicao += matriz[linha_palavra][coluna_palavra]
+            linha_palavra += 1
+            coluna_palavra += 1
     elif(direcao == "diagonal_para_esquerda"): # caso a direção seja diagonal para a esquerda
-        pass
+        for indice in range(0, tamanho_palavra): # percorrendo a quantidade de letras da palavra
+            # adicionando a letra existente na matriz
+            palavra_existente_na_posicao += matriz[linha_palavra][coluna_palavra]
+            linha_palavra += 1
+            coluna_palavra -= 1
     return palavra_existente_na_posicao # retornando a palavra que já existe na posição
 
 # função para escolher posição aleatória para a palavra

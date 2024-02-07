@@ -21,39 +21,44 @@ def definir_tamanho_matriz():
     tamanho_colunas_matriz = tamanho_matriz # definindo o tamanho das colunas da matriz
     return tamanho_matriz, tamanho_linhas_matriz, tamanho_colunas_matriz # retornando valores da matriz
 
+# verificando se a palavra já existe
+def palavra_ja_existe(palavras, palavra_digitada):
+    for palavra in palavras: # percorrendo lista de palavras
+        if(palavra == palavra_digitada): # caso a palavra da lista seja igual a palavra digitada
+            print("A palavra já existe!") # informando que a palavra já existe
+            return True # retornando que a palavra já existe
+    return False # retornando que a palavra não existe
+
+# verificando se a palavra possui um tamanho permitido
+def palavra_possui_tamanho_permitido(palavra_digitada, tamanho_matriz):
+    if(len(palavra_digitada) <= tamanho_matriz): # caso o usuário digite uma palavra que possua um tamanho permitido
+        return True # retornando que a palavra possui um tamanho permitido
+    print("A palavra possui um tamanho não permitido!") # informando que a palavra possui um tamanho não permitido
+    return False # retornando que a palavra possui um tamanho não permitido
+
+# verificando se a digitação de palavras deve ser finalizada
+def finalizar_digitar_palavras(palavra_digitada):
+    if(not palavra_digitada # caso o usuário não digite nada
+       or palavra_digitada.replace(" ", "") == ""): # caso o usuário digite apenas espaços
+        return True # retornando que a digitação de palavras deve ser finalizada
+    return False # retornando que a digitação de palavras não deve ser finalizada
+
 # criando lista de palavras
 def criar_palavras(tamanho_matriz):
+    print("Você deve digitar até", tamanho_matriz, "palavras com no máximo", tamanho_matriz, "letras!"
+          "\nPara finalizar a digitação digite ENTER") # informando a quantidade de palavras que o usuário deve digitar
     palavras = [] # criando lista de palavras vazia
-    # informando a quantidade de palavras que o usuário deve digitar
-    print("Você deve digitar até", tamanho_matriz, "palavras com no máximo", tamanho_matriz, "letras")
-    # percorrendo a quantidade de palavras que o usuário deve digitar
-    for indice_palavra in range(0, tamanho_matriz):
-        sair = 0 # permitir digitar menos palavras que o máximo possível
-        digite_palavra = 1 # permitir a digitação de uma palavra
-        # caso deva digitar uma nova palavra
-        while(digite_palavra == 1):
-            # pegando a palavra digitada
-            palavra_digitada = str(input(f'Digite a {indice_palavra+1}a palavra: '))
-            # removendo espaços da palavra digitada
-            palavra_digitada = palavra_digitada.replace(" ", "")
-            # caso o usuário não digite nada ou apenas espaços
-            if not palavra_digitada or palavra_digitada.replace(" ", "") == "":
-                sair = 1 # finalizando a digitação de palavras antes do máximo possível
+    for indice_palavra in range(0, tamanho_matriz): # percorrendo a quantidade de palavras que o usuário deve digitar
+        while(True): # caso deva digitar uma nova palavra
+            palavra_digitada = str(input(f'Digite a {indice_palavra+1}a palavra: ')) # pegando a palavra digitada
+            palavra_digitada = palavra_digitada.replace(" ", "") # removendo espaços da palavra digitada
+            if(finalizar_digitar_palavras(palavra_digitada)): # caso o usuário não digite nada ou apenas espaços
                 break # finalizando a digitação de palavras
-            # caso o usuário digite uma palavra
-            else:
-                # caso a palavra possua um tamanho permitido
-                if(len(palavra_digitada) <= tamanho_matriz):
-                    palavras.append(palavra_digitada) # adicionando palavra na lista de palavras
-                    digite_palavra = 0 # permitir a digitação de uma nova palavra
-                # caso a palavra possua um tamanho não permitido
-                else:
-                    # informando que a palavra possui um tamanho não permitido
-                    print("A palavra possui um tamanho não permitido!")
-                    digite_palavra = 1 # não permitir a digitação de uma nova palavra
-                                       # até que o usuário digite uma palavra com tamanho permitido
-        # caso deva finalizar a digitação de palavras antes do máximo possível
-        if(sair == 1):
+            if(palavra_possui_tamanho_permitido(palavra_digitada, tamanho_matriz) # caso a palavra possua um tamanho permitido
+               and not palavra_ja_existe(palavras, palavra_digitada)): # caso a palavra não exista
+                palavras.append(palavra_digitada) # adicionando palavra na lista de palavras
+                break # finalizando a digitação de palavras
+        if(finalizar_digitar_palavras(palavra_digitada)): # caso deva finalizar a digitação de palavras antes do máximo possível
             break # finalizando a digitação de palavras
     return palavras # retornando lista de palavras
 
@@ -177,8 +182,10 @@ def colocar_palavras_na_posicao(matriz, palavras, palavra, direcao, tamanho_pala
 def colocar_palavras_na_matriz(matriz, palavras, tamanho_linhas_matriz, tamanho_colunas_matriz):
     for palavra in palavras: # para cada palavra na lista de palavras
         tamanho_palavra = len(palavra) # tamanho da palavra
-        # escolhendo posicao aleatoria para a palavra
-        direcao = random.choice(["horizontal", "vertical", "diagonal_para_direita", "diagonal_para_esquerda"])
+        direcao = random.choice(["horizontal", # escolhendo posicao aleatoria para a palavra
+                                 "vertical",
+                                 "diagonal_para_direita",
+                                 "diagonal_para_esquerda"])
         # chamar a função para colocar as palavras na posição escolhida
         colocar_palavras_na_posicao(matriz, palavras, palavra, direcao, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz)
 

@@ -16,10 +16,15 @@ def printar_palavras(palavras):
 
 # definindo tamanho da matriz
 def definir_tamanho_matriz():
-    tamanho_matriz = int(input("Defina o tamanho da matriz quadrada: ")) # definindo o tamanho da matriz
-    tamanho_linhas_matriz = tamanho_matriz # definindo o tamanho das linhas da matriz
-    tamanho_colunas_matriz = tamanho_matriz # definindo o tamanho das colunas da matriz
-    return tamanho_matriz, tamanho_linhas_matriz, tamanho_colunas_matriz # retornando valores da matriz
+    while(True): # caso precise digitar novo valor para o tamanho da matriz
+        tamanho_matriz = input("Defina o tamanho da matriz quadrada: ") # definindo o tamanho da matriz
+        if(tamanho_matriz.isdigit()): # caso o tamanho da matriz seja um número inteiro
+            tamanho_matriz = int(tamanho_matriz) # convertendo o tamanho da matriz para um número inteiro
+            tamanho_linhas_matriz = tamanho_matriz # definindo o tamanho das linhas da matriz
+            tamanho_colunas_matriz = tamanho_matriz # definindo o tamanho das colunas da matriz
+            return tamanho_matriz, tamanho_linhas_matriz, tamanho_colunas_matriz # retornando valores da matriz
+        else: # caso o tamanho da matriz não seja um número inteiro
+            print("O tamanho da matriz deve ser um número inteiro!") # informando que o tamanho da matriz deve ser um número inteiro
 
 # verificando se a palavra já existe
 def palavra_ja_existe(palavras, palavra_digitada):
@@ -36,6 +41,13 @@ def palavra_possui_tamanho_permitido(palavra_digitada, tamanho_matriz):
     print("A palavra possui um tamanho não permitido!") # informando que a palavra possui um tamanho não permitido
     return False # retornando que a palavra possui um tamanho não permitido
 
+# verificando se a palavra possui apenas letras
+def palavra_possui_apenas_letras(palavra_digitada):
+    if(palavra_digitada.isalpha()): # caso a palavra digitada possua apenas letras
+        return True # retornando que a palavra possui apenas letras
+    print("A palavra deve possuir apenas letras!") # informando que a palavra deve possuir apenas letras
+    return False # retornando que a palavra não possui apenas letras
+
 # verificando se a digitação de palavras deve ser finalizada
 def finalizar_digitar_palavras(palavra_digitada):
     if(not palavra_digitada # caso o usuário não digite nada
@@ -46,7 +58,7 @@ def finalizar_digitar_palavras(palavra_digitada):
 # criando lista de palavras
 def criar_palavras(tamanho_matriz):
     print("Você deve digitar até", tamanho_matriz, "palavras com no máximo", tamanho_matriz, "letras!"
-          "\nPara finalizar a digitação digite ENTER") # informando a quantidade de palavras que o usuário deve digitar
+          "\nPara finalizar a digitação, digite ENTER") # informando a quantidade de palavras que o usuário deve digitar
     palavras = [] # criando lista de palavras vazia
     for indice_palavra in range(0, tamanho_matriz): # percorrendo a quantidade de palavras que o usuário deve digitar
         while(True): # caso deva digitar uma nova palavra
@@ -55,7 +67,8 @@ def criar_palavras(tamanho_matriz):
             if(finalizar_digitar_palavras(palavra_digitada)): # caso o usuário não digite nada ou apenas espaços
                 break # finalizando a digitação de palavras
             if(palavra_possui_tamanho_permitido(palavra_digitada, tamanho_matriz) # caso a palavra possua um tamanho permitido
-               and not palavra_ja_existe(palavras, palavra_digitada)): # caso a palavra não exista
+               and not palavra_ja_existe(palavras, palavra_digitada) # caso a palavra não exista
+               and palavra_possui_apenas_letras(palavra_digitada)): # caso a palavra possua apenas letras
                 palavras.append(palavra_digitada) # adicionando palavra na lista de palavras
                 break # finalizando a digitação de palavras
         if(finalizar_digitar_palavras(palavra_digitada)): # caso deva finalizar a digitação de palavras antes do máximo possível
@@ -161,26 +174,30 @@ def colocar_palavras_na_posicao(matriz, palavra, direcao, tamanho_palavra, taman
             colocando_palavras_na_matriz(matriz, palavra, direcao, linha_palavra, coluna_palavra) # colocando a palavra na matriz
             break # não permitir a escolha de uma nova posição para a palavra
 
+# verificando posições permitidas para a palavra
+def posicoes_permitidas_para_palavra(matriz, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz):
+    posicoes = ["horizontal", "vertical", "diagonal para esquerda", "diagonal para direita"] # criando lista de posições
+    return posicoes # retornando lista de posições
+
 # colocando as palavras na matriz
 def colocar_palavras_na_matriz(matriz, palavras, tamanho_linhas_matriz, tamanho_colunas_matriz):
     for palavra in palavras: # para cada palavra na lista de palavras
         tamanho_palavra = len(palavra) # tamanho da palavra
-        direcao = random.choice(["horizontal", # escolhendo posicao aleatoria para a palavra
-                                 "vertical",
-                                 "diagonal_para_direita",
-                                 "diagonal_para_esquerda"])
+        direcao = random.choice(posicoes_permitidas_para_palavra(matriz, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz)) # escolhendo direção aleatória para a palavra
         colocar_palavras_na_posicao(matriz, palavra, direcao, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz) # chamar a função para colocar as palavras na posição escolhida
+        printar_matriz(matriz) # printando a matriz
 
 # função principal
 def main():
     tamanho_matriz, tamanho_linhas_matriz, tamanho_colunas_matriz = definir_tamanho_matriz() # definindo o tamanho da matriz
     matriz = criar_matriz(tamanho_linhas_matriz, tamanho_colunas_matriz) # criando a matriz do tamanho definido e a preenchendo com vazios
     palavras = criar_palavras(tamanho_matriz) # criando as palavras
-    palavras.sort(key=len, reverse=True) # reordenando as palavras para que as maiores fiquem primeiro
-    colocar_palavras_na_matriz(matriz, palavras, tamanho_linhas_matriz, tamanho_colunas_matriz) # colocando as palavras na matriz
+    palavras_do_maior_pro_menor = palavras.sort(key=len, reverse=True) # reordenando as palavras para que as maiores fiquem primeiro
+    colocar_palavras_na_matriz(matriz, palavras_do_maior_pro_menor, tamanho_linhas_matriz, tamanho_colunas_matriz) # colocando as palavras na matriz
     matriz = preenchendo_matriz(matriz, tamanho_linhas_matriz, tamanho_colunas_matriz) # preenchendo a matriz com letras aleatorias no lugar dos vazios
     printar_matriz(matriz) # printando a matriz
-    printar_palavras(palavras) # printando as palavras
+    palavras_em_ordem_alfabetica = palavras.sort() # reordenando as palavras para a ordem alfabética
+    printar_palavras(palavras_em_ordem_alfabetica) # printando as palavras
 
 # chamando a função principal
 if __name__ == "__main__":

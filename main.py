@@ -192,11 +192,11 @@ def main():
     tamanho_matriz, tamanho_linhas_matriz, tamanho_colunas_matriz = definir_tamanho_matriz() # definindo o tamanho da matriz
     matriz = criar_matriz(tamanho_linhas_matriz, tamanho_colunas_matriz) # criando a matriz do tamanho definido e a preenchendo com vazios
     palavras = criar_palavras(tamanho_matriz) # criando as palavras
-    palavras_do_maior_pro_menor = palavras.sort(key=len, reverse=True) # reordenando as palavras para que as maiores fiquem primeiro
+    palavras_do_maior_pro_menor = sorted(palavras, key=len, reverse=True) # reordenando as palavras para que as maiores fiquem primeiro
     colocar_palavras_na_matriz(matriz, palavras_do_maior_pro_menor, tamanho_linhas_matriz, tamanho_colunas_matriz) # colocando as palavras na matriz
     matriz = preenchendo_matriz(matriz, tamanho_linhas_matriz, tamanho_colunas_matriz) # preenchendo a matriz com letras aleatorias no lugar dos vazios
     printar_matriz(matriz) # printando a matriz
-    palavras_em_ordem_alfabetica = palavras.sort() # reordenando as palavras para a ordem alfabética
+    palavras_em_ordem_alfabetica = sorted(palavras) # reordenando as palavras para a ordem alfabética
     printar_palavras(palavras_em_ordem_alfabetica) # printando as palavras
 
 # chamando a função principal

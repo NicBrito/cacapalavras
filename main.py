@@ -1,5 +1,7 @@
 import random
 
+from pyparsing import col
+
 # lista com as letras do alfabeto
 letras = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
           'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
@@ -108,20 +110,24 @@ def colocando_palavras_na_matriz(matriz, palavra, direcao, linha_palavra, coluna
         for letra in palavra:
             matriz[linha_palavra][coluna_palavra] = letra
             linha_palavra += 1
-    elif(direcao == "diagonal_para_direita"):
+    elif(direcao == "diagonal para direita"):
         for letra in palavra:
             matriz[linha_palavra][coluna_palavra] = letra
             linha_palavra += 1
             coluna_palavra += 1
-    elif(direcao == "diagonal_para_esquerda"):
+    elif(direcao == "diagonal para esquerda"):
         for letra in palavra:
             matriz[linha_palavra][coluna_palavra] = letra
             linha_palavra += 1
             coluna_palavra -= 1
 
 # função para checar sobreposição de palavras na matriz
-def checar_sobreposicao_palavras(palavra_existente_na_matriz):
-    if(palavra_existente_na_matriz == ""): # caso a palavra existente na matriz seja vazia
+def checar_sobreposicao_palavras(palavra_existente_na_matriz, palavra):
+    if(palavra_existente_na_matriz == "" # caso a palavra existente na matriz seja vazia
+       or (
+           len(palavra_existente_na_matriz) == 1 # caso a palavra existente na matriz possua apenas uma letra
+           and palavra_existente_na_matriz[0] == palavra[0] # caso a letra da palavra existente na matriz seja igual a primeira letra da palavra
+           )):
         return False # não vai sobrepor outra palavra
     else: # caso a palavra existente na matriz não seja vazia
         return True # vai sobrepor outra palavra
@@ -137,12 +143,12 @@ def checar_palavra_existente_na_matriz(matriz, direcao, tamanho_palavra, linha_p
         for indice in range(0, tamanho_palavra): # percorrendo a quantidade de letras da palavra
             palavra_existente_na_posicao += matriz[linha_palavra][coluna_palavra] # adicionando a letra existente na variável
             linha_palavra += 1 # selecionado próxima linha para pegar a próxima letra da palavra
-    elif(direcao == "diagonal_para_direita"): # caso a direção seja diagonal para a direita
+    elif(direcao == "diagonal para direita"): # caso a direção seja diagonal para a direita
         for indice in range(0, tamanho_palavra): # percorrendo a quantidade de letras da palavra
             palavra_existente_na_posicao += matriz[linha_palavra][coluna_palavra] # adicionando a letra existente na variável
             linha_palavra += 1 # selecionado próxima linha para pegar a próxima letra da palavra
             coluna_palavra += 1 # selecionado próxima coluna para pegar a próxima letra da palavra
-    elif(direcao == "diagonal_para_esquerda"): # caso a direção seja diagonal para a esquerda
+    elif(direcao == "diagonal para esquerda"): # caso a direção seja diagonal para a esquerda
         for indice in range(0, tamanho_palavra): # percorrendo a quantidade de letras da palavra
             palavra_existente_na_posicao += matriz[linha_palavra][coluna_palavra] # adicionando a letra existente na variável
             linha_palavra += 1 # selecionado próxima linha para pegar a próxima letra da palavra
@@ -150,38 +156,42 @@ def checar_palavra_existente_na_matriz(matriz, direcao, tamanho_palavra, linha_p
     return palavra_existente_na_posicao # retornando a palavra que já existe na posição
 
 # função para escolher posição aleatória para a palavra
-def escolher_posicao_aleatoria_para_palavra(direcao, tamanho_linhas_matriz, tamanho_colunas_matriz, tamanho_palavra):
-    if(direcao == "horizontal"):
-        linha_palavra = random.randint(0, tamanho_colunas_matriz-1)
-        coluna_palavra = random.randint(0, tamanho_linhas_matriz-tamanho_palavra)
-    elif(direcao == "vertical"):
-        linha_palavra = random.randint(0, tamanho_colunas_matriz-tamanho_palavra)
-        coluna_palavra = random.randint(0, tamanho_linhas_matriz-1)
-    elif(direcao == "diagonal_para_direita"):
-        linha_palavra = random.randint(0, tamanho_colunas_matriz-tamanho_palavra)
-        coluna_palavra = random.randint(0, tamanho_linhas_matriz-tamanho_palavra)
-    elif(direcao == "diagonal_para_esquerda"):
-        linha_palavra = random.randint(0, tamanho_colunas_matriz-tamanho_palavra)
-        coluna_palavra = random.randint(tamanho_palavra-1, tamanho_linhas_matriz-1)
-    else:
-        linha_palavra = 0
-        coluna_palavra = 0
+def escolher_posicao_aleatoria_para_palavra(matriz, palavra, direcao, tamanho_linhas_matriz, tamanho_colunas_matriz, tamanho_palavra):
+    while(True): # caso a posição escolhida para a palavra não seja permitida
+        if(direcao == "horizontal"):
+            linha_palavra = random.randint(0, tamanho_colunas_matriz-1)
+            coluna_palavra = random.randint(0, tamanho_linhas_matriz-tamanho_palavra)
+        elif(direcao == "vertical"):
+            linha_palavra = random.randint(0, tamanho_colunas_matriz-tamanho_palavra)
+            coluna_palavra = random.randint(0, tamanho_linhas_matriz-1)
+        elif(direcao == "diagonal para direita"):
+            linha_palavra = random.randint(0, tamanho_colunas_matriz-tamanho_palavra)
+            coluna_palavra = random.randint(0, tamanho_linhas_matriz-tamanho_palavra)
+        elif(direcao == "diagonal para esquerda"):
+            linha_palavra = random.randint(0, tamanho_colunas_matriz-tamanho_palavra)
+            coluna_palavra = random.randint(tamanho_palavra-1, tamanho_linhas_matriz-1)
+        else:
+            linha_palavra = 0
+            coluna_palavra = 0
+        if(matriz[linha_palavra][coluna_palavra] == "" # caso a posição da matriz seja um vazio
+           or matriz[linha_palavra][coluna_palavra] == palavra[0]): # caso a posição da matriz seja igual a primeira letra da palavra
+            break # permitir a escolha da posição para a palavra
     return linha_palavra, coluna_palavra # retornando a linha e a coluna da palavra
 
 # função para colocar as palavras na posição escolhida
 def colocar_palavras_na_posicao(matriz, palavra, direcao, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz):
     while(True): # caso deva escolher uma nova posição para a palavra
-        linha_palavra, coluna_palavra = escolher_posicao_aleatoria_para_palavra(direcao, tamanho_linhas_matriz, tamanho_colunas_matriz, tamanho_palavra) # escolhendo posicao aleatoria para a palavra
+        linha_palavra, coluna_palavra = escolher_posicao_aleatoria_para_palavra(matriz, palavra, direcao, tamanho_linhas_matriz, tamanho_colunas_matriz, tamanho_palavra) # escolhendo posicao aleatoria para a palavra
         palavra_existente_na_matriz = checar_palavra_existente_na_matriz(matriz, direcao, tamanho_palavra, linha_palavra, coluna_palavra) # checar palavra que já existe nessa posição na matriz
-        palavra_vai_sobrepor_outra = checar_sobreposicao_palavras(palavra_existente_na_matriz) # checar se a palavra vai sobrepor outra palavra
+        palavra_vai_sobrepor_outra = checar_sobreposicao_palavras(palavra_existente_na_matriz, palavra) # checar se a palavra vai sobrepor outra palavra
         if(palavra_vai_sobrepor_outra == False): # se a palavra não for sobrescrever outra, colocar na matriz
             colocando_palavras_na_matriz(matriz, palavra, direcao, linha_palavra, coluna_palavra) # colocando a palavra na matriz
             break # não permitir a escolha de uma nova posição para a palavra
 
 # função para verificar se a posição horizontal é permitida
 def pode_horizontal(matriz, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz):
-    contador = 0 # criando contador
     for linha in range(0, tamanho_colunas_matriz): # percorrendo cada linha da matriz
+        contador = 0 # criando contador
         for coluna in range(0, tamanho_linhas_matriz): # percorrendo cada coluna da linha
             if(matriz[linha][coluna] == ""): # caso a posição da matriz seja um vazio
                 contador += 1 # incrementando o contador
@@ -189,11 +199,12 @@ def pode_horizontal(matriz, tamanho_palavra, tamanho_linhas_matriz, tamanho_colu
                 contador = 0 # zerando o contador
             if(contador == tamanho_palavra): # caso o contador seja igual ao tamanho da palavra
                 return True # retornando que a posição horizontal é permitida
+    return False # retornando que a posição horizontal não é permitida
 
 # função para verificar se a posição vertical é permitida
 def pode_vertical(matriz, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz):
-    contador = 0 # criando contador
     for coluna in range(0, tamanho_linhas_matriz): # percorrendo cada coluna da matriz
+        contador = 0 # criando contador
         for linha in range(0, tamanho_colunas_matriz): # percorrendo cada linha da coluna
             if(matriz[linha][coluna] == ""): # caso a posição da matriz seja um vazio
                 contador += 1 # incrementando o contador
@@ -201,13 +212,54 @@ def pode_vertical(matriz, tamanho_palavra, tamanho_linhas_matriz, tamanho_coluna
                 contador = 0 # zerando o contador
             if(contador == tamanho_palavra): # caso o contador seja igual ao tamanho da palavra
                 return True # retornando que a posição vertical é permitida
+    return False # retornando que a posição vertical não é permitida
+
+# função de verificação das diagonais para direita
+def verificando_diagonal_para_direita(matriz, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, linha, coluna):
+    contador = 0 # criando contador
+    while(linha < tamanho_linhas_matriz and coluna < tamanho_colunas_matriz): # enquanto a linha e a coluna forem menores que o tamanho da matriz
+        if(matriz[linha][coluna] == ""): # caso a posição da matriz seja um vazio
+            contador += 1 # incrementando o contador
+        else: # caso a posição da matriz não seja um vazio
+            contador = 0 # zerando o contador
+        if(contador == tamanho_palavra): # caso o contador seja igual ao tamanho da palavra
+            return True # retornando que a posição diagonal para a direita é permitida
+        linha += 1 # incrementando a linha
+        coluna += 1 # incrementando a coluna
+    return False # retornando que a posição diagonal para a direita não é permitida
 
 # função para verificar se a posição diagonal para a direita é permitida
 def pode_diagonal_para_direita(matriz, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz):
+    for coluna in range(0, tamanho_linhas_matriz - tamanho_palavra + 1): # percorrendo cada coluna da matriz
+        if(verificando_diagonal_para_direita(matriz, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, 0, coluna)): # verificar se a posição diagonal para a direita é permitida
+            return True # retornando que a posição diagonal para a direita é permitida
+    for linha in range(1, tamanho_colunas_matriz - tamanho_palavra + 1): # percorrendo cada linha da matriz
+        if(verificando_diagonal_para_direita(matriz, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, linha, 0)): # verificar se a posição diagonal para a direita é permitida
+            return True # retornando que a posição diagonal para a direita é permitida
     return False # retornando que a posição diagonal para a direita não é permitida
+
+# função de verificação das diagonais para esquerda
+def verificando_diagonal_para_esquerda(matriz, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, linha, coluna):
+    contador = 0 # criando contador
+    while(linha < tamanho_linhas_matriz and coluna >= 0): # enquanto a linha e a coluna forem menores que o tamanho da matriz
+        if(matriz[linha][coluna] == ""): # caso a posição da matriz seja um vazio
+            contador += 1 # incrementando o contador
+        else: # caso a posição da matriz não seja um vazio
+            contador = 0 # zerando o contador
+        if(contador == tamanho_palavra): # caso o contador seja igual ao tamanho da palavra
+            return True # retornando que a posição diagonal para a esquerda é permitida
+        linha += 1 # incrementando a linha
+        coluna -= 1 # incrementando a coluna
+    return False # retornando que a posição diagonal para a esquerda não é permitida
 
 # função para verificar se a posição diagonal para a esquerda é permitida
 def pode_diagonal_para_esquerda(matriz, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz):
+    for coluna in range(tamanho_palavra - 1, tamanho_linhas_matriz - 1): # percorrendo cada coluna da matriz
+        if(verificando_diagonal_para_esquerda(matriz, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, 0, coluna)): # verificar se a posição diagonal para a esquerda é permitida
+            return True # retornando que a posição diagonal para a esquerda é permitida
+    for linha in range(0, tamanho_colunas_matriz - tamanho_palavra + 1): # percorrendo cada linha da matriz
+        if(verificando_diagonal_para_esquerda(matriz, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, linha, tamanho_linhas_matriz - 1)): # verificar se a posição diagonal para a esquerda é permitida
+            return True # retornando que a posição diagonal para a esquerda é permitida
     return False # retornando que a posição diagonal para a esquerda não é permitida
 
 # verificando posições permitidas para a palavra
@@ -240,7 +292,11 @@ def colocar_palavras_na_matriz(matriz, palavras, tamanho_linhas_matriz, tamanho_
         letras_palavra = registrar_letras_e_frequencia(palavra) # letras da palavra e a sua frequência
         direcoes_permitidas = posicoes_permitidas_para_palavra(matriz, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz) # direções permitidas para a palavra
         print(f'A palavra "{palavra}" pode ser colocada nas posições "{direcoes_permitidas}"') # informando as posições que a palavra pode ser colocada
+        if(direcoes_permitidas == []): # caso não haja posições permitidas para a palavra
+            print(f'A palavra "{palavra}" não pode ser colocada em nenhuma posição!')
+            exit() # finalizando o programa
         direcao = random.choice(direcoes_permitidas) # escolhendo direção aleatória para a palavra
+        print(f'A palavra "{palavra}" será colocada na posição "{direcao}"') # informando a posição que a palavra será colocada
         colocar_palavras_na_posicao(matriz, palavra, direcao, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz) # chamar a função para colocar as palavras na posição escolhida
         printar_matriz(matriz) # printando a matriz
 

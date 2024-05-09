@@ -1,4 +1,5 @@
 import random
+from unidecode import unidecode
 
 # lista com as letras do alfabeto
 letras = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
@@ -73,7 +74,7 @@ def criar_palavras(tamanho_matriz):
     tentativas = 3 # definindo a quantidade de tentativas para digitar as palavras
     for indice in range(0, tamanho_matriz): # percorrendo a quantidade de palavras que o usuário deve digitar
         while(existe_tentativas(tentativas)): # caso deva digitar uma nova palavra
-            palavra_digitada = str(input(f'Digite a {indice+1}a palavra: ')).upper().replace(" ", "") # pegando a palavra digitada, convertendo para maiúsculo e removendo espaços
+            palavra_digitada = unidecode(str(input(f'Digite a {indice+1}a palavra: ')).upper().replace(" ", "")) # pegando a palavra digitada, convertendo para maiúsculo e removendo espaços e acentos
             if(finalizar_digitar_palavras(palavra_digitada)): # caso o usuário não digite nada ou apenas espaços
                 break # finalizando a digitação de palavras
             if(palavra_possui_tamanho_permitido(palavra_digitada, tamanho_matriz) # caso a palavra possua um tamanho permitido

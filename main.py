@@ -1,10 +1,26 @@
 import random
-from unidecode import unidecode
 
 # lista com as letras do alfabeto
-letras = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
-          'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
-          'u', 'v', 'w', 'x', 'y', 'z']
+letras = [
+            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+            'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+         ]
+
+# lista com os acentos e suas respectivas letras
+acentos = {
+            'á': 'a', 'à': 'a', 'â': 'a', 'ã': 'a', 'ä': 'a',
+            'é': 'e', 'è': 'e', 'ê': 'e', 'ë': 'e',
+            'í': 'i', 'ì': 'i', 'î': 'i', 'ï': 'i',
+            'ó': 'o', 'ò': 'o', 'ô': 'o', 'õ': 'o', 'ö': 'o',
+            'ú': 'u', 'ù': 'u', 'û': 'u', 'ü': 'u',
+            'ç': 'c',
+            'Á': 'A', 'À': 'A', 'Â': 'A', 'Ã': 'A', 'Ä': 'A',
+            'É': 'E', 'È': 'E', 'Ê': 'E', 'Ë': 'E',
+            'Í': 'I', 'Ì': 'I', 'Î': 'I', 'Ï': 'I',
+            'Ó': 'O', 'Ò': 'O', 'Ô': 'O', 'Õ': 'O', 'Ö': 'O',
+            'Ú': 'U', 'Ù': 'U', 'Û': 'U', 'Ü': 'U',
+            'Ç': 'C'
+          }
 
 # printando a matriz
 def printar_matriz(matriz):
@@ -66,6 +82,16 @@ def finalizar_digitar_palavras(palavra_digitada):
         return True # retornando que a digitação de palavras deve ser finalizada
     return False # retornando que a digitação de palavras não deve ser finalizada
 
+# função para remover a acentuação das palavras
+def remover_acentuacao(palavra):
+    palavra_sem_acentuacao = "" # criando variável para armazenar a palavra sem acentuação
+    for letra in palavra: # percorrendo cada letra da palavra
+        if(letra in acentos): # caso a letra possua acento
+            palavra_sem_acentuacao += acentos[letra] # adicionando a letra sem acento na variável
+        else: # caso a letra não possua acento
+            palavra_sem_acentuacao += letra # adicionando a letra na variável
+    return palavra_sem_acentuacao # retornando a palavra sem acentuação
+
 # criando lista de palavras
 def criar_palavras(tamanho_matriz):
     print("Você deve digitar até", tamanho_matriz, "palavras com no máximo", tamanho_matriz, "letras!"
@@ -74,7 +100,7 @@ def criar_palavras(tamanho_matriz):
     tentativas = 3 # definindo a quantidade de tentativas para digitar as palavras
     for indice in range(0, tamanho_matriz): # percorrendo a quantidade de palavras que o usuário deve digitar
         while(existe_tentativas(tentativas)): # caso deva digitar uma nova palavra
-            palavra_digitada = unidecode(str(input(f'Digite a {indice+1}a palavra: ')).upper().replace(" ", "")) # pegando a palavra digitada, convertendo para maiúsculo e removendo espaços e acentos
+            palavra_digitada = remover_acentuacao(str(input(f'Digite a {indice+1}a palavra: ')).upper().replace(" ", "")) # pegando a palavra digitada, convertendo para maiúsculo e removendo espaços e acentos
             if(finalizar_digitar_palavras(palavra_digitada)): # caso o usuário não digite nada ou apenas espaços
                 break # finalizando a digitação de palavras
             if(palavra_possui_tamanho_permitido(palavra_digitada, tamanho_matriz) # caso a palavra possua um tamanho permitido

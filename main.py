@@ -53,6 +53,33 @@ def solicitar_tamanho_matriz():
             tentativas -= 1 # decrementando a quantidade de tentativas
     return tamanho_matriz, tamanho_linhas_matriz, tamanho_colunas_matriz # retornando valores da matriz
 
+# função para reordenar as palavras no dicionário
+def reordenar_palavras(palavras, ordenacao):
+    palavras_ordenadas = {} # criando dicionário vazio
+    match ordenacao: # verificando a ordenação das palavras
+        case "alfabética": # caso a ordenação seja alfabética
+            palavras_ordenadas = dict(sorted(palavras.items())) # ordenando as palavras em ordem alfabética
+        case "maior para o menor": # caso a ordenação seja maior para o menor
+            palavras_ordenadas = dict(sorted(palavras.items(), key=lambda item: len(item[0]), reverse=True)) # ordenando as palavras do maior para o menor
+    return palavras_ordenadas # retornando dicionário de palavras ordenadas
+
+# função para registrar as palavras
+def registrar_palavras(palavras, palavra):
+    letras = {} # criando dicionário de letras
+    for letra in palavra: # percorrendo cada letra da palavra
+        if(letra in letras): # caso a letra já exista no dicionário de letras
+            letras[letra] += 1 # incrementando a quantidade da letra
+        else: # caso a letra não exista no dicionário de letras
+            letras[letra] = 1 # adicionando a letra no dicionário de letras
+    palavras[palavra] = { # adicionando palavra no dicionário de palavras
+        "letras": letras, # adicionando dicionário de letras na palavra
+        "posicao": { # criando dicionário de posição
+            "inicial": (0,0), # adicionando posição inicial da palavra
+            "final": (0,0) # adicionando posição final da palavra
+                   }
+                        }
+    return palavras # retornando dicionário de palavras
+
 # verificando se a palavra possui apenas letras
 def verificar_palavra_apenas_letras(palavra_digitada):
     if(palavra_digitada.isalpha()): # caso a palavra digitada possua apenas letras
@@ -96,7 +123,7 @@ def remover_acentos(palavra):
 def coletar_palavras(tamanho_matriz):
     print("Você deve digitar até", tamanho_matriz, "palavras com no máximo", tamanho_matriz, "letras!"
           "\nPara finalizar a digitação, digite ENTER") # informando a quantidade de palavras que o usuário deve digitar
-    palavras = [] # criando lista de palavras vazia
+    palavras = {} # criando dicionário de palavras
     tentativas = 3 # definindo a quantidade de tentativas para digitar as palavras
     for indice in range(0, tamanho_matriz): # percorrendo a quantidade de palavras que o usuário deve digitar
         while(verificar_tentativas_restantes(tentativas)): # caso deva digitar uma nova palavra
@@ -106,7 +133,7 @@ def coletar_palavras(tamanho_matriz):
             if(verificar_tamanho_palavra(palavra_digitada, tamanho_matriz) # caso a palavra possua um tamanho permitido
                and not verificar_palavra_ja_existe(palavras, palavra_digitada) # caso a palavra não exista
                and verificar_palavra_apenas_letras(palavra_digitada)): # caso a palavra possua apenas letras
-                palavras.append(palavra_digitada) # adicionando palavra na lista de palavras
+                palavras = registrar_palavras(palavras, palavra_digitada) # registrando a palavra
                 break # finalizando a digitação de palavras
             else: # caso a palavra não possua um tamanho permitido, já exista ou não possua apenas letras
                 tentativas -= 1 # decrementando a quantidade de tentativas
@@ -133,24 +160,45 @@ def preencher_matriz_com_letras_aleatorias(matriz, tamanho_linhas_matriz, tamanh
                 matriz[numero_linha][numero_coluna] = letra_aleatoria # adicionando letra aleatoria na linha
     return matriz # retornando matriz
 
+# função para registrar as posições da palavra
+def registrar_posicoes_da_palavra(palavras, palavra, posicao_inicial, posicao_final):
+    palavras[palavra]["posicao"]["inicial"] = posicao_inicial # registrando a posição inicial da palavra
+    palavras[palavra]["posicao"]["final"] = posicao_final # registrando a posição final da palavra
+    return palavras # retornando dicionário de palavras e suas posições
+
 # função para colocar as palavras na matriz
-def inserir_palavra_na_posicao_escolhida(matriz, palavra, direcao, linha_palavra, coluna_palavra):
-    for letra in palavra: # percorrendo cada letra da palavra
+def inserir_palavra_na_posicao_escolhida(matriz, palavras, palavra, direcao, linha_palavra, coluna_palavra):
+    posicao_inicial = (linha_palavra+1, coluna_palavra+1) # definindo a posição inicial da palavra
+    for indice, letra in enumerate(palavra): # percorrendo cada letra da palavra
         match direcao: # verificando a direção da palavra
             case "horizontal": # caso a direção seja horizontal
                 matriz[linha_palavra][coluna_palavra] = letra # adicionando letra na posição da matriz
+                if(indice+1 == len(palavra)): # caso a palavra tenha sido completamente inserida na matriz
+                    break # finalizando a inserção da palavra na matriz
                 coluna_palavra += 1 # incrementando a coluna para a próxima letra da palavra
             case "vertical": # caso a direção seja vertical
                 matriz[linha_palavra][coluna_palavra] = letra # adicionando letra na posição da matriz
+                if(indice+1 == len(palavra)): # caso a palavra tenha sido completamente inserida na matriz
+                    break # finalizando a inserção da palavra na matriz
                 linha_palavra += 1 # incrementando a linha para a próxima letra da palavra
             case "diagonal para direita": # caso a direção seja diagonal para a direita
                 matriz[linha_palavra][coluna_palavra] = letra # adicionando letra na posição da matriz
+                if(indice+1 == len(palavra)): # caso a palavra tenha sido completamente inserida na matriz
+                    break # finalizando a inserção da palavra na matriz
                 linha_palavra += 1 # incrementando a linha para a próxima letra da palavra
                 coluna_palavra += 1 # incrementando a coluna para a próxima letra da palavra
             case "diagonal para esquerda": # caso a direção seja diagonal para a esquerda
                 matriz[linha_palavra][coluna_palavra] = letra # adicionando letra na posição da matriz
+                if(indice+1 == len(palavra)): # caso a palavra tenha sido completamente inserida na matriz
+                    break # finalizando a inserção da palavra na matriz
                 linha_palavra += 1 # incrementando a linha para a próxima letra da palavra
                 coluna_palavra -= 1 # decrementando a coluna para a próxima letra da palavra
+    posicao_final = (linha_palavra+1, coluna_palavra+1) # definindo a posição final da palavra
+    if(palavra not in palavras): # caso a palavra não esteja no dicionário de palavras
+        palavra = palavra[::-1] # invertendo a palavra
+        posicao_inicial, posicao_final = posicao_final, posicao_inicial # invertendo a posição inicial e final da palavra
+    palavras = registrar_posicoes_da_palavra(palavras, palavra, posicao_inicial, posicao_final) # registrando as posições da palavra
+    return palavras # retornando dicionário de palavras e suas posições
 
 # função para checar sobreposição de palavras na matriz
 def verificar_sobreposicao_palavras(palavra, tamanho_palavra, palavra_existente_na_matriz, sobreposicao):
@@ -192,15 +240,17 @@ def obter_palavra_existente_na_matriz(matriz, direcao, tamanho_palavra, linha_pa
     return palavra_existente_na_posicao # retornando a palavra que já existe na posição
 
 # função para verificar se a posição escolhida para a palavra é permitida
-def validar_posicao_palavra(matriz, letras_palavra, linha_palavra, coluna_palavra, sobreposicao):
+def validar_posicao_palavra(matriz, palavras, palavra, linha_palavra, coluna_palavra, sobreposicao):
+    if(palavra not in palavras): # caso a palavra não esteja no dicionário de palavras
+        palavra = palavra[::-1] # invertendo a palavra
     if(not sobreposicao and matriz[linha_palavra][coluna_palavra] == ""): # caso não permita sobreposição e a posição da matriz seja um vazio
         return True # retornando que a posição escolhida para a palavra é permitida
-    if(sobreposicao and (matriz[linha_palavra][coluna_palavra] == "" or matriz[linha_palavra][coluna_palavra] in letras_palavra)): # caso permita sobreposição e a posição da matriz seja um vazio ou contenha uma letra da palavra
+    if(sobreposicao and (matriz[linha_palavra][coluna_palavra] == "" or matriz[linha_palavra][coluna_palavra] in palavras[palavra]["letras"])): # caso permita sobreposição e a posição da matriz seja um vazio ou contenha uma letra da palavra
         return True # retornando que a posição escolhida para a palavra é permitida
     return False # retornando que a posição escolhida para a palavra não é permitida
 
 # função para escolher posição aleatória para a palavra
-def escolher_posicao_palavra(matriz, direcao, letras_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, tamanho_palavra, sobreposicao):
+def escolher_posicao_palavra(matriz, palavras, palavra, direcao, tamanho_linhas_matriz, tamanho_colunas_matriz, tamanho_palavra, sobreposicao):
     linha_palavra = 0 # definindo zero como padrão para a linha da palavra
     coluna_palavra = 0 # definindo zero como padrão para a coluna da palavra
     while(True): # caso a posição escolhida para a palavra não seja permitida
@@ -217,23 +267,23 @@ def escolher_posicao_palavra(matriz, direcao, letras_palavra, tamanho_linhas_mat
             case "diagonal para esquerda": # caso a direção seja diagonal para a esquerda
                 linha_palavra = random.randint(0, tamanho_colunas_matriz-tamanho_palavra) # escolhendo linha aleatória para a palavra
                 coluna_palavra = random.randint(tamanho_palavra-1, tamanho_linhas_matriz-1) # escolhendo coluna aleatória para a palavra
-        if(validar_posicao_palavra(matriz, letras_palavra, linha_palavra, coluna_palavra, sobreposicao)): # verificar se a posição escolhida é permitida
+        if(validar_posicao_palavra(matriz, palavras, palavra, linha_palavra, coluna_palavra, sobreposicao)): # verificar se a posição escolhida é permitida
             break # permitir a escolha da posição para a palavra
     return linha_palavra, coluna_palavra # retornando a linha e a coluna da palavra
 
 # função para colocar as palavras na posição escolhida
-def posicionar_palavra_na_matriz(matriz, palavra, direcao, tamanho_palavra, letras_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, sobreposicao):
+def posicionar_palavra_na_matriz(matriz, palavras, palavra, direcao, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, sobreposicao):
     if("invertida" in direcao): # caso a direção seja invertida
         direcao = direcao.replace(" invertida", "") # removendo a palavra invertida da direção
         palavra = palavra[::-1] # invertendo a palavra
     while(True): # caso deva escolher uma nova posição para a palavra
-        linha_palavra, coluna_palavra = escolher_posicao_palavra(matriz, direcao, letras_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, tamanho_palavra, sobreposicao) # escolhendo posicao aleatoria para a palavra
+        linha_palavra, coluna_palavra = escolher_posicao_palavra(matriz, palavras, palavra, direcao, tamanho_linhas_matriz, tamanho_colunas_matriz, tamanho_palavra, sobreposicao) # escolhendo posicao aleatoria para a palavra
         palavra_existente_na_matriz = obter_palavra_existente_na_matriz(matriz, direcao, tamanho_palavra, linha_palavra, coluna_palavra) # checar palavra que já existe nessa posição na matriz
         if(palavra_existente_na_matriz == list(palavra)): # caso a palavra existente na matriz seja igual a palavra
-            return False # retornando que a palavra não pode ser colocada na matriz
+            return False, palavras # retornando que a palavra não pode ser colocada na matriz e o dicionário de palavras
         if(verificar_sobreposicao_palavras(palavra, tamanho_palavra, palavra_existente_na_matriz, sobreposicao)): # checar se a palavra pode ser colocada na matriz
-            inserir_palavra_na_posicao_escolhida(matriz, palavra, direcao, linha_palavra, coluna_palavra) # colocando a palavra na matriz
-            return True # retornando que a palavra foi colocada na matriz
+            palavras = inserir_palavra_na_posicao_escolhida(matriz, palavras, palavra, direcao, linha_palavra, coluna_palavra) # colocando a palavra na matriz
+            return True, palavras # retornando que a palavra foi colocada na matriz e o dicionário de palavras
 
 # função para contar posições permitidas
 def contar_posicoes_vazias(matriz, linha, coluna, contador):
@@ -403,7 +453,7 @@ def verificar_sobreposicao(matriz, palavra, tamanho_palavra_esquerda, tamanho_pa
     return False # retornando que a palavra não pode sobrepor outra palavra
 
 # função para verificar quais posições permitem sobreposição
-def obter_posicoes_com_sobreposicao(matriz, palavra, letras_palavra, letra_na_matriz, linha, coluna):
+def obter_posicoes_com_sobreposicao(matriz, palavras, palavra, letra_na_matriz, linha, coluna):
     posicoes = [] # criando lista de posições
     direcoes = { # criando dicionário de direções
         "horizontal": False, "horizontal": True, # direções horizontais
@@ -411,7 +461,7 @@ def obter_posicoes_com_sobreposicao(matriz, palavra, letras_palavra, letra_na_ma
         "diagonal para direita": False, "diagonal para direita": True, # direções diagonais para a direita
         "diagonal para esquerda": False, "diagonal para esquerda": True # direções diagonais para a esquerda
     }
-    for indice in range(0, letras_palavra[letra_na_matriz]): # percorrendo a quantidade de vezes que a letra existe na palavra
+    for indice in range(0, palavras[palavra]["letras"][letra_na_matriz]): # percorrendo a quantidade de vezes que a letra existe na palavra
         if(indice == 0): # caso seja a primeira vez que a letra aparece na palavra
             indice_letra_na_palavra = palavra.index(letra_na_matriz) # índice da letra da matriz na palavra
         else: # caso não seja a primeira vez que a letra aparece na palavra
@@ -426,25 +476,25 @@ def obter_posicoes_com_sobreposicao(matriz, palavra, letras_palavra, letra_na_ma
     return posicoes # retornando lista de posições
 
 # função para verificar se a matriz permite sobreposição
-def verificar_posicoes_com_sobreposicao(matriz, palavra, letras_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz):
+def verificar_posicoes_com_sobreposicao(matriz, palavras, palavra, tamanho_linhas_matriz, tamanho_colunas_matriz):
     posicoes = [] # criando lista de posições
     posicoes_retornadas = [] # criando lista de posições retornadas
     for linha in range(0, tamanho_colunas_matriz): # percorrendo cada linha da matriz
         for coluna in range(0, tamanho_linhas_matriz): # percorrendo cada coluna da linha
             letra_na_matriz = matriz[linha][coluna] # letra contida na posição atual da matriz
-            if(letra_na_matriz in letras_palavra): # caso a letra na matriz esteja contida na palavra
-                posicoes_retornadas.extend(obter_posicoes_com_sobreposicao(matriz, palavra, letras_palavra, letra_na_matriz, linha, coluna)) # verificar quais posições permitem sobreposição
+            if(letra_na_matriz in palavras[palavra]["letras"]): # caso a letra na matriz esteja contida na palavra
+                posicoes_retornadas.extend(obter_posicoes_com_sobreposicao(matriz, palavras, palavra, letra_na_matriz, linha, coluna)) # verificar quais posições permitem sobreposição
     for indice in range(0, len(posicoes_retornadas)): # percorrendo a quantidade de posições retornadas
         if(posicoes_retornadas[indice] not in posicoes): # caso a posição não esteja na lista de posições
             posicoes.append(posicoes_retornadas[indice]) # adicionando a posição na lista de posições
     return posicoes # retornando lista de posições
 
 # verificando posições permitidas para a palavra
-def obter_posicoes_para_palavra(matriz, palavra, tamanho_palavra, letras_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, sobreposicao):
+def obter_posicoes_para_palavra(matriz, palavras, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, sobreposicao):
     posicoes = [] # criando lista de posições
     for indice in range(0, 2): # caso precise mudar o estado da sobreposição
         if(sobreposicao): # caso a palavra possa sobrepor outra palavra
-            posicoes.extend(verificar_posicoes_com_sobreposicao(matriz, palavra, letras_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz)) # verificar quais posições pode ocorrer sobreposição
+            posicoes.extend(verificar_posicoes_com_sobreposicao(matriz, palavras, palavra, tamanho_linhas_matriz, tamanho_colunas_matriz)) # verificar quais posições pode ocorrer sobreposição
         if not (sobreposicao): # caso a palavra não possa sobrepor outra palavra
             posicoes.extend(verificar_posicoes_sem_sobreposicao(matriz, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz)) # verificar posições permitidas para a palavra sem sobreposição
         if(posicoes == [] and indice == 0): # caso não haja posições permitidas para a palavra
@@ -454,57 +504,51 @@ def obter_posicoes_para_palavra(matriz, palavra, tamanho_palavra, letras_palavra
     return posicoes, sobreposicao # retornando lista de posições e o estado da sobreposição
 
 # função para escolher posição aleatória para a palavra
-def escolher_posicao_aleatoria(matriz, palavra, tamanho_palavra, letras_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, sobreposicao):
-    direcoes_permitidas, sobreposicao = obter_posicoes_para_palavra(matriz, palavra, tamanho_palavra, letras_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, sobreposicao) # direções permitidas para a palavra
+def escolher_posicao_aleatoria(matriz, palavras, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, sobreposicao):
+    direcoes_permitidas, sobreposicao = obter_posicoes_para_palavra(matriz, palavras, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, sobreposicao) # direções permitidas para a palavra
     if(direcoes_permitidas == []): # caso não haja posições permitidas para a palavra
         return "", sobreposicao # retornando que a palavra não pode ser colocada em nenhuma posição e se a palavra pode sobrepor outra palavra
     direcao = random.choice(direcoes_permitidas) # escolhendo direção aleatória para a palavra
     return direcao, sobreposicao # retornando a direção escolhida e se a palavra pode sobrepor outra palavra
 
 # função para colocar as palavras na matriz
-def inserir_palavra_na_matriz(matriz, palavra, tamanho_palavra, letras_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz):
+def inserir_palavra_na_matriz(matriz, palavras, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz):
     sobreposicao = random.choice([True, False]) # escolhendo aleatoriamente se a palavra vai sobrepor outra palavra
-    direcao, sobreposicao = escolher_posicao_aleatoria(matriz, palavra, tamanho_palavra, letras_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, sobreposicao) # escolhendo posição aleatória para a palavra
-    if(direcao == "" or not posicionar_palavra_na_matriz(matriz, palavra, direcao, tamanho_palavra, letras_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, sobreposicao)): # caso a palavra não possa ser colocada em nenhuma posição
-        return False # recolocar as palavras na matriz
-    return True # não recolocar as palavras na matriz
-
-# função para registrar as letras contidas em uma palavra e a sua frequência
-def registrar_letras_e_frequencia(palavra):
-    letras_e_frequencia = {} # criando dicionário para armazenar as letras e a sua frequência
-    for letra in palavra: # percorrendo cada letra da palavra
-        if(letra in letras_e_frequencia): # caso a letra já esteja no dicionário
-            letras_e_frequencia[letra] += 1 # incrementando a frequência da letra
-        else: # caso a letra não esteja no dicionário
-            letras_e_frequencia[letra] = 1 # adicionando a letra no dicionário e a sua frequência
-    return letras_e_frequencia # retornando dicionário com as letras e a sua frequência
+    direcao, sobreposicao = escolher_posicao_aleatoria(matriz, palavras, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, sobreposicao) # escolhendo posição aleatória para a palavra
+    if(direcao == ""): # caso a palavra não possa ser colocada em nenhuma posição
+        return False, palavras # recolocar as palavras na matriz
+    palavra_foi_colocada, palavras = posicionar_palavra_na_matriz(matriz, palavras, palavra, direcao, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, sobreposicao) # colocando a palavra na matriz na posição escolhida
+    if not (palavra_foi_colocada): # caso a palavra não tenha sido colocada na matriz
+        return False, palavras # recolocar as palavras na matriz
+    return True, palavras # não recolocar as palavras na matriz
 
 # colocando as palavras na matriz
 def inserir_palavras_na_matriz(matriz, palavras, tamanho_linhas_matriz, tamanho_colunas_matriz):
+    lista_de_palavras = list(palavras.keys()) # criando lista de palavras
     while(True): # caso precise recolocar as palavras na matriz
         contador = 0 # criando contador
-        for palavra in palavras: # para cada palavra na lista de palavras
+        for palavra in lista_de_palavras: # para cada palavra na lista de palavras
             tamanho_palavra = len(palavra) # tamanho da palavra
-            letras_palavra = registrar_letras_e_frequencia(palavra) # letras da palavra e a sua frequência
-            if not (inserir_palavra_na_matriz(matriz, palavra, tamanho_palavra, letras_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz)): # caso a palavra não possa ser colocada na matriz
+            palavra_foi_colocada, palavras = inserir_palavra_na_matriz(matriz, palavras, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz) # colocando a palavra na matriz
+            if not (palavra_foi_colocada): # caso a palavra não possa ser colocada na matriz
                 matriz = gerar_matriz_vazia(tamanho_linhas_matriz, tamanho_colunas_matriz) # esvaziando a matriz
                 break # recolocar as palavras na matriz
             contador += 1 # incrementando o contador
         if(contador == len(palavras)): # caso todas as palavras tenham sido colocadas na matriz
             break # finalizando a colocação das palavras na matriz
-    return matriz # retornando a matriz
+    return matriz, palavras # retornando a matriz e as palavras
 
 # função principal
 def main():
     tamanho_matriz, tamanho_linhas_matriz, tamanho_colunas_matriz = solicitar_tamanho_matriz() # definindo o tamanho da matriz
     matriz = gerar_matriz_vazia(tamanho_linhas_matriz, tamanho_colunas_matriz) # criando a matriz do tamanho definido e a preenchendo com vazios
     palavras = coletar_palavras(tamanho_matriz) # criando as palavras
-    palavras_do_maior_pro_menor = sorted(palavras, key=len, reverse=True) # reordenando as palavras para que as maiores fiquem primeiro
-    matriz = inserir_palavras_na_matriz(matriz, palavras_do_maior_pro_menor, tamanho_linhas_matriz, tamanho_colunas_matriz) # colocando as palavras na matriz
+    palavras = reordenar_palavras(palavras, "maior para o menor") # reordenando as palavras do maior para o menor
+    matriz, palavras = inserir_palavras_na_matriz(matriz, palavras, tamanho_linhas_matriz, tamanho_colunas_matriz) # colocando as palavras na matriz
     matriz = preencher_matriz_com_letras_aleatorias(matriz, tamanho_linhas_matriz, tamanho_colunas_matriz) # preenchendo a matriz com letras aleatorias no lugar dos vazios
     exibir_matriz(matriz) # printando a matriz
-    palavras_em_ordem_alfabetica = sorted(palavras) # reordenando as palavras para a ordem alfabética
-    exibir_palavras(palavras_em_ordem_alfabetica) # printando as palavras
+    palavras = reordenar_palavras(palavras, "alfabética") # reordenando as palavras em ordem alfabética
+    exibir_palavras(palavras) # printando as palavras
 
 # chamando a função principal
 if __name__ == "__main__":

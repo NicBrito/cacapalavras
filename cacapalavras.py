@@ -43,13 +43,13 @@ def solicitar_tamanho_matriz():
     tentativas = 3 # definindo a quantidade de tentativas para digitar o tamanho da matriz
     while(verificar_tentativas_restantes(tentativas)): # caso precise digitar novo valor para o tamanho da matriz
         tamanho_matriz = input("Defina o tamanho da matriz quadrada: ") # definindo o tamanho da matriz
-        if(tamanho_matriz.isdigit() and int(tamanho_matriz) > 0): # caso o tamanho da matriz seja um número inteiro e maior que zero
+        if(tamanho_matriz.isdigit() and int(tamanho_matriz) > 1): # caso o tamanho da matriz seja um número inteiro e maior que um
             tamanho_matriz = int(tamanho_matriz) # convertendo o tamanho da matriz para um número inteiro
             tamanho_linhas_matriz = tamanho_matriz # definindo o tamanho das linhas da matriz
             tamanho_colunas_matriz = tamanho_matriz # definindo o tamanho das colunas da matriz
             break # finalizando a definição do tamanho da matriz
-        else: # caso o tamanho da matriz não seja um número inteiro e maior que zero
-            print("O tamanho da matriz deve ser um número inteiro e maior que zero!") # informando que o tamanho da matriz deve ser um número inteiro e maior que zero
+        else: # caso o tamanho da matriz não seja um número inteiro e maior que um
+            print("O tamanho da matriz deve ser um número inteiro e maior que um!") # informando que o tamanho da matriz deve ser um número inteiro e maior que um
             tentativas -= 1 # decrementando a quantidade de tentativas
     return tamanho_matriz, tamanho_linhas_matriz, tamanho_colunas_matriz # retornando valores da matriz
 
@@ -80,12 +80,12 @@ def registrar_palavras(palavras, palavra):
                         }
     return palavras # retornando dicionário de palavras
 
-# verificando se a palavra possui apenas letras
-def verificar_palavra_apenas_letras(palavra_digitada):
-    if(palavra_digitada.isalpha()): # caso a palavra digitada possua apenas letras
-        return True # retornando que a palavra possui apenas letras
-    print("A palavra deve possuir apenas letras!") # informando que a palavra deve possuir apenas letras
-    return False # retornando que a palavra não possui apenas letras
+# verificando se a palavra possui um tamanho permitido
+def verificar_tamanho_palavra(palavra_digitada, tamanho_matriz):
+    if(1 < len(palavra_digitada) <= tamanho_matriz): # caso o usuário digite uma palavra que possua um tamanho permitido
+        return True # retornando que a palavra possui um tamanho permitido
+    print("A palavra possui um tamanho não permitido!") # informando que a palavra possui um tamanho não permitido
+    return False # retornando que a palavra possui um tamanho não permitido
 
 # verificando se a palavra já existe
 def verificar_palavra_ja_existe(palavras, palavra_digitada):
@@ -95,12 +95,12 @@ def verificar_palavra_ja_existe(palavras, palavra_digitada):
             return True # retornando que a palavra já existe
     return False # retornando que a palavra não existe
 
-# verificando se a palavra possui um tamanho permitido
-def verificar_tamanho_palavra(palavra_digitada, tamanho_matriz):
-    if(len(palavra_digitada) <= tamanho_matriz): # caso o usuário digite uma palavra que possua um tamanho permitido
-        return True # retornando que a palavra possui um tamanho permitido
-    print("A palavra possui um tamanho não permitido!") # informando que a palavra possui um tamanho não permitido
-    return False # retornando que a palavra possui um tamanho não permitido
+# verificando se a palavra possui apenas letras
+def verificar_palavra_apenas_letras(palavra_digitada):
+    if(palavra_digitada.isalpha()): # caso a palavra digitada possua apenas letras
+        return True # retornando que a palavra possui apenas letras
+    print("A palavra deve possuir apenas letras!") # informando que a palavra deve possuir apenas letras
+    return False # retornando que a palavra não possui apenas letras
 
 # verificando se a digitação de palavras deve ser finalizada
 def finalizar_coletar_palavras(palavra_digitada):
@@ -121,7 +121,7 @@ def remover_acentos(palavra):
 
 # criando lista de palavras
 def coletar_palavras(tamanho_matriz):
-    print("Você deve digitar até", tamanho_matriz, "palavras com no máximo", tamanho_matriz, "letras!"
+    print("Você deve digitar até", tamanho_matriz, "palavras que tenham mais de uma letra e no máximo", tamanho_matriz, "letras!"
           "\nPara finalizar a digitação, digite ENTER") # informando a quantidade de palavras que o usuário deve digitar
     palavras = {} # criando dicionário de palavras
     tentativas = 3 # definindo a quantidade de tentativas para digitar as palavras
@@ -130,9 +130,9 @@ def coletar_palavras(tamanho_matriz):
             palavra_digitada = remover_acentos(str(input(f'Digite a {indice+1}a palavra: ')).upper().replace(" ", "")) # pegando a palavra digitada, convertendo para maiúsculo e removendo espaços e acentos
             if(finalizar_coletar_palavras(palavra_digitada)): # caso o usuário não digite nada ou apenas espaços
                 break # finalizando a digitação de palavras
-            if(verificar_tamanho_palavra(palavra_digitada, tamanho_matriz) # caso a palavra possua um tamanho permitido
+            if(verificar_palavra_apenas_letras(palavra_digitada) # caso a palavra possua apenas letras
                and not verificar_palavra_ja_existe(palavras, palavra_digitada) # caso a palavra não exista
-               and verificar_palavra_apenas_letras(palavra_digitada)): # caso a palavra possua apenas letras
+               and verificar_tamanho_palavra(palavra_digitada, tamanho_matriz)): # caso a palavra possua um tamanho permitido
                 palavras = registrar_palavras(palavras, palavra_digitada) # registrando a palavra
                 break # finalizando a digitação de palavras
             else: # caso a palavra não possua um tamanho permitido, já exista ou não possua apenas letras

@@ -22,14 +22,21 @@ acentos = {
             'Ç': 'C'
           }
 
-# printando a matriz
+# função para exibir a matriz
 def exibir_matriz(matriz):
     for linha in matriz: # percorrendo linha por linha da matriz
-        print(f'|{"|".join([f"{letra}" for letra in linha]).upper()}|') # printando linha da matriz
+        print(f'|{"|".join([f"{letra}" for letra in linha])}|') # printando linha da matriz
 
-# printando as palavras
+# função para exibir as palavras
 def exibir_palavras(palavras):
-    print(f'Palavras: {", ".join(palavras).upper()}') # printando a lista de palavras
+    print(f'{", ".join(palavras)}') # printando a lista de palavras
+
+# função para exibir o caça-palavras
+def exibir_cacapalavras(matriz, palavras):
+    lista_palavras = list(palavras.keys()) # obtendo a lista de palavras
+    print(f'{"-"*(len(matriz)*2+1)} CAÇA-PALAVRAS {"-"*(len(matriz)*2+1)}') # exibindo o título do caça-palavras
+    for indice, linha in enumerate(matriz): # percorrendo as linhas da matriz
+        print(f'|{"|".join([f"{letra}" for letra in linha])}|{" "*len(" CAÇA-PALAVRAS ")}{lista_palavras[indice] if indice < len(lista_palavras) else ""}') # exibindo as linhas do caça-palavras e as palavras
 
 # função para verificar se o usuário ainda possui tentativas
 def verificar_tentativas_restantes(tentativas):
@@ -58,7 +65,7 @@ def reordenar_palavras(palavras, ordenacao):
     palavras_ordenadas = {} # criando dicionário vazio
     match ordenacao: # verificando a ordenação das palavras
         case "alfabética": # caso a ordenação seja alfabética
-            palavras_ordenadas = dict(sorted(palavras.items())) # ordenando as palavras em ordem alfabética
+            palavras_ordenadas = dict(sorted(palavras.items(), key=lambda item: item[0].lower())) # ordenando as palavras em ordem alfabética
         case "maior para o menor": # caso a ordenação seja maior para o menor
             palavras_ordenadas = dict(sorted(palavras.items(), key=lambda item: len(item[0]), reverse=True)) # ordenando as palavras do maior para o menor
     return palavras_ordenadas # retornando dicionário de palavras ordenadas
@@ -157,7 +164,7 @@ def preencher_matriz_com_letras_aleatorias(matriz, tamanho_linhas_matriz, tamanh
         for coluna in range(0, tamanho_linhas_matriz): # percorrendo coluna por coluna da matriz
             if(matriz[linha][coluna] == ""): # caso a posição da matriz seja um vazio
                 letra_aleatoria = random.choice(letras) # escolhendo letra aleatoria
-                matriz[linha][coluna] = letra_aleatoria # adicionando letra aleatoria na linha
+                matriz[linha][coluna] = letra_aleatoria.upper() # adicionando letra aleatoria na linha
     return matriz # retornando matriz
 
 # função para registrar as posições da palavra

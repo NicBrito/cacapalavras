@@ -16,6 +16,62 @@
 '''
 
 import cacapalavras
+import os
+
+# função para manter apenas as palavras marcadas na matriz
+def manter_apenas_palavras_marcadas_na_matriz(matriz):
+    for linha in range(0, len(matriz)): # percorrendo as linhas da matriz
+        for coluna in range(0, len(matriz)): # percorrendo as colunas da matriz
+            if not (matriz[linha][coluna] == matriz[linha][coluna].lower()): # verificando se a letra não está marcada
+                matriz[linha][coluna] = " " # removendo letra não marcada
+    return matriz # retornando a matriz com apenas as palavras marcadas
+
+# função para encerrar a procura de palavras no caça-palavras
+def encerramento(matriz, palavras, erros):
+    os.system('cls' if os.name == 'nt' else 'clear') # limpando a tela
+    matriz = manter_apenas_palavras_marcadas_na_matriz(matriz) # mantendo apenas as palavras marcadas na matriz
+    cacapalavras.exibir_cacapalavras(matriz, palavras) # exibindo o caça-palavras
+    print(f'Você cometeu {"nenhum" if(erros == 0) else "1"} erro!') if(0 <= erros <= 1) else print(f'Você cometeu {erros} erros!') # informando ao usuário quantos erros ele cometeu
+
+# função para marcar a palavra no dicionário
+def marcar_palavra_no_dicionario(palavras, palavra_na_matriz):
+    dados_da_palavra = palavras[palavra_na_matriz] # obtendo os dados da palavra
+    palavras[palavra_na_matriz.lower()] = dados_da_palavra # adicionando a palavra marcada no dicionário
+    del palavras[palavra_na_matriz] # removendo a palavra não marcada do dicionário
+    palavras = cacapalavras.reordenar_palavras(palavras, "alfabética") # reordenando as palavras no dicionário para a ordem alfabética
+    return palavras # retornando o dicionário com a palavra marcada
+
+# função para marcar a palavra na matriz
+def marcar_palavra_na_matriz(matriz, posicao_inicial, posicao_final):
+    tamanho_palavra = descobrir_tamanho_palavra(posicao_inicial, posicao_final) # descobrindo o tamanho da palavra
+    posicao = descobrir_posicao(posicao_inicial, posicao_final) # descobrindo a posição da palavra
+    if("invertida" in posicao): # verificando se a posição é invertida
+        posicao = posicao.replace(" invertida", "") # removendo a palavra invertida da posição
+        posicao_inicial, posicao_final = posicao_final, posicao_inicial # invertendo a posição inicial e final
+    linha_palavra, coluna_palavra = posicao_inicial[0] - 1, posicao_inicial[1] - 1 # criando variáveis para a linha e a coluna da palavra
+    for indice in range(0, tamanho_palavra): # percorrendo a quantidade de letras da palavra
+        matriz[linha_palavra][coluna_palavra] = matriz[linha_palavra][coluna_palavra].lower() # marcando a letra da palavra na matriz
+        match posicao: # verificando a posição da palavra
+            case "horizontal": # caso a posição seja horizontal
+                coluna_palavra += 1 # selecionado próxima coluna
+            case "vertical": # caso a posição seja vertical
+                linha_palavra += 1 # selecionado próxima linha
+            case "diagonal para direita": # caso a posição seja diagonal para a direita
+                linha_palavra += 1 # selecionado próxima linha
+                coluna_palavra += 1 # selecionado próxima coluna
+            case "diagonal para esquerda": # caso a posição seja diagonal para a esquerda
+                linha_palavra += 1 # selecionado próxima linha
+                coluna_palavra -= 1 # selecionado próxima coluna
+    return matriz # retornando a matriz com a palavra marcada
+
+# função para marcar todas as palavras na matriz
+def marcar_todas_palavras_na_matriz(matriz, palavras):
+    lista_palavras = list(palavras.keys()) # criando uma lista com as palavras que devem ser encontradas
+    for palavra in lista_palavras: # percorrendo as palavras do dicionário
+        posicao_inicial = palavras[palavra]['posicao']['inicial'] # obtendo a posição inicial da palavra
+        posicao_final = palavras[palavra]['posicao']['final'] # obtendo a posição final da palavra
+        matriz = marcar_palavra_na_matriz(matriz, posicao_inicial, posicao_final) # marcando a palavra na matriz
+    return matriz # retornando a matriz com todas as palavras marcadas
 
 # função para descobrir o tamanho entre duas posições na matriz
 def descobrir_tamanho_palavra(posicao_inicial, posicao_final):
@@ -120,10 +176,12 @@ def pedir_posicao(tamanho_matriz):
             posicao = input(f'Digite a posição {["inicial", "final"][indice]} da palavra (linha, coluna): ') # pedindo a posição da palavra
             if(cacapalavras.finalizar_coletar_palavras(posicao)): # verificando se o usuário deseja encerrar a procura de palavras
                 return '', '' # encerrando a procura de palavras
-            if (validar_posicao(posicao, tamanho_matriz)): # verificando se a posição dita pelo usuário é válida
-                break # não pedir nova posição
-            else: # caso a posição dita pelo usuário seja inválida
-                tentativas -= 1 # decrementando a quantidade de tentativas
+            if(validar_posicao(posicao, tamanho_matriz)): # verificando se a posição dita pelo usuário é válida
+                if(indice == 1 and tratar_posicao(posicao) == posicao_inicial): # verificando se a posição final é igual a posição inicial
+                    print('Posição final não pode ser igual a posição inicial! Digite uma posição válida.') # informando ao usuário que a posição final não pode ser igual a posição inicial
+                else: # caso a posição final não seja igual a posição inicial
+                    break # não pedir nova posição
+            tentativas -= 1 # decrementando a quantidade de tentativas, caso a posição seja inválida
         if(indice == 0): # verificando se é a posição inicial
             posicao_inicial = tratar_posicao(posicao) # criando a tupla da posição inicial
         else: # caso seja a posição final
@@ -132,19 +190,29 @@ def pedir_posicao(tamanho_matriz):
 
 # função principal
 def main(matriz, palavras):
-    for palavra in palavras:
-        print(f'PALAVRA: {palavra.ljust(10)}\t\tPOSIÇÃO: {palavras[palavra]['posicao']['inicial']}{palavras[palavra]['posicao']['final']}')
+    acertos = 0 # quantidade de acertos do usuário
+    erros = 0 # quantidade de erros do usuário
+    lista_palavras = list(palavras.keys()) # criando uma lista com as palavras que devem ser encontradas
     while(True): # procurando as palavras na matriz
-        cacapalavras.exibir_matriz(matriz) # printando a matriz
+        if(acertos == len(lista_palavras)): # verificando se o usuário encontrou todas as palavras
+            encerramento(matriz, palavras, erros) # encerrando a procura de palavras
+            print(f'Parabéns! Você encontrou todas as palavras!') # informando ao usuário que ele encontrou todas as palavras
+            break # encerrando a procura de palavras
+        os.system('cls' if os.name == 'nt' else 'clear') # limpando a tela
+        cacapalavras.exibir_cacapalavras(matriz, palavras) # exibindo o caça-palavras
         posicao_inicial, posicao_final = pedir_posicao(len(matriz)) # pedindo a posição da palavra ao usuário
         if(not posicao_inicial or not posicao_final): # verificando se o usuário deseja encerrar a procura de palavras
+            matriz = marcar_todas_palavras_na_matriz(matriz, palavras) # marcando todas as palavras na matriz
+            encerramento(matriz, palavras, erros) # encerrando a procura de palavras
             print(f'Procura de palavras encerrada!') # informando ao usuário que a procura de palavras foi encerrada
             break # encerrando a procura de palavras
-        palavra_na_matriz = "".join(obter_palavra_existente_na_matriz(matriz, posicao_inicial, posicao_final)) # obtendo a palavra na matriz
-        if(palavra_na_matriz in list(palavras.keys())): # verificando se a palavra está na lista de palavras que devem ser encontradas
-            print(f'Palavra {palavra_na_matriz} encontrada!') # informando ao usuário que a palavra foi encontrada
+        palavra_na_matriz = "".join(obter_palavra_existente_na_matriz(matriz, posicao_inicial, posicao_final)).upper() # obtendo a palavra na matriz
+        if(palavra_na_matriz in lista_palavras): # verificando se a palavra está na lista de palavras que devem ser encontradas
+            matriz = marcar_palavra_na_matriz(matriz, posicao_inicial, posicao_final) # marcando a palavra na matriz
+            palavras = marcar_palavra_no_dicionario(palavras, palavra_na_matriz) # marcando a palavra no dicionário
+            acertos += 1 # incrementando a quantidade de acertos
         else: # caso a palavra não esteja na lista de palavras que devem ser encontradas
-            print(f'Palavra não encontrada! Palavra na matriz foi {palavra_na_matriz.upper()}') # informando ao usuário que a palavra não foi encontrada
+            erros += 1 # incrementando a quantidade de erros
 
 # chamando a função principal
 # if __name__ == '__main__':

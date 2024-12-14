@@ -1,11 +1,44 @@
-# Objetivos do projeto
+# Caça-Palavras
 
-Criar um jogo de caça palavras onde tenha-se uma lista pré definida com as palavras: amor, paz, raiva, python, lar.
+Bem-vindo ao projeto **Caça-Palavras**! Este programa permite criar, resolver e personalizar jogos de caça-palavras de maneira simples.
 
-## Regras
+## 📜 Funcionalidades
+- Geração de tabuleiros de caça-palavras com palavras personalizadas.
+- Solução automática do caça-palavras.
+- Suporte a diferentes tamanhos de tabuleiro.
+- Interface interativa via terminal.
 
-- A matriz pode ter o tamanho de sua escolha, contanto que seja maior ou igual a maior palavra que deve ser encontrada
-- A matriz deve ser identificada por letras e números (coluna e linha) e o usuário deve responder com a letra e número correspondentes ao inicial e ao final da palavra encontrada
-- Caso a entrada do usuário esteja errada, retorne uma mensagem de erro
-- Caso a entrada do usuário esteja certa, retorne uma mensagem de sucesso
-- Quando todas as palavras do jogo forem acertadas, finalize a interação com o usuário
+## 🚀 Como usar
+1. Clone este repositório:
+    ```bash
+    git clone https://github.com/NicBrito/cacapalavras.git
+    ```
+2. Navegue até o diretório do projeto:
+    ```bash
+    cd cacapalavras
+    ```
+3. Instale as dependências:
+    ```bash
+    pip install -r requirements.txt
+    ```
+4. Execute o programa:
+    ```bash
+    python src/main.py
+    ```
+
+## 📂 Estrutura do Projeto
+    cacapalavras/
+    ├── src/                # Código-fonte principal
+    ├── tests/              # Testes automatizados
+    ├── data/               # Dados e listas de palavras
+    ├── docs/               # Documentação adicional
+    ├── .gitignore          # Arquivo para ignorar arquivos desnecessários
+    ├── README.md           # Informações sobre o projeto
+    └── requirements.txt    # Dependências do projeto
+
+## 🛠 Tecnologias Utilizadas
+    Python 3.12.8
+
+## ✅ Próximos Passos
+- Adicionar suporte a diferentes tamanhos de tabuleiro.
+- Desenvolver uma interface gráfica.

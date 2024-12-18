@@ -6,7 +6,7 @@ def verificar_tentativas_restantes(tentativas):
     return True # retornando que o usuário possui tentativas
 
 # função para verificar se a posição dita pelo usuário é válida
-def validar_posicao(posicao, tamanho_matriz):
+def validar_posicao_usuario(posicao, tamanho_matriz):
     try: # tentando separar a linha e a coluna da posição dita pelo usuário
         linha, coluna = map(int, posicao.strip('()').split(',')) # separando a linha e a coluna da posição
     except ValueError: # caso não seja possível separar a linha e a coluna da posição dita pelo usuário
@@ -18,6 +18,6 @@ def validar_posicao(posicao, tamanho_matriz):
     return True # retornando que a posição é válida
 
 # função para tratar a posição dita pelo usuário
-def tratar_posicao(posicao):
+def tratar_posicao_usuario(posicao):
     posicao = tuple(map(int, posicao.replace(' ', '').strip('()').split(','))) # transformando a posição em uma tupla
     return posicao # retornando a posição tratada

@@ -1,9 +1,9 @@
 import random
 from constants import LETRAS
-from words import descobrir_tamanho_palavra, descobrir_posicao
+from words import palavras_descobrir_tamanho, palavras_descobrir_posicao
 
 # criando a matriz do tamanho definido e a preenchendo com vazios
-def gerar_matriz_vazia(tamanho_linhas_matriz, tamanho_colunas_matriz):
+def matriz_criar_vazia(tamanho_linhas_matriz, tamanho_colunas_matriz):
     matriz = [] # criando matriz vazia
     for linha in range(0, tamanho_colunas_matriz): # percorrendo linha por linha da matriz
         linha_vazia = [] # criando linha vazia
@@ -13,7 +13,7 @@ def gerar_matriz_vazia(tamanho_linhas_matriz, tamanho_colunas_matriz):
     return matriz # retornando matriz
 
 # preenchendo a matriz com letras aleatorias no lugar dos vazios
-def preencher_matriz_com_letras_aleatorias(matriz, tamanho_linhas_matriz, tamanho_colunas_matriz):
+def matriz_preencher_com_letras_aleatorias(matriz, tamanho_linhas_matriz, tamanho_colunas_matriz):
     for linha in range(0, tamanho_colunas_matriz): # percorrendo linha por linha da matriz
         for coluna in range(0, tamanho_linhas_matriz): # percorrendo coluna por coluna da matriz
             if(matriz[linha][coluna] == ""): # caso a posição da matriz seja um vazio
@@ -22,7 +22,7 @@ def preencher_matriz_com_letras_aleatorias(matriz, tamanho_linhas_matriz, tamanh
     return matriz # retornando matriz
 
 # função para manter apenas as palavras marcadas na matriz
-def manter_apenas_palavras_marcadas_na_matriz(matriz):
+def matriz_manter_apenas_palavras_marcadas(matriz):
     for linha in range(0, len(matriz)): # percorrendo as linhas da matriz
         for coluna in range(0, len(matriz)): # percorrendo as colunas da matriz
             if not (matriz[linha][coluna] == matriz[linha][coluna].lower()): # verificando se a letra não está marcada
@@ -30,9 +30,9 @@ def manter_apenas_palavras_marcadas_na_matriz(matriz):
     return matriz # retornando a matriz com apenas as palavras marcadas
 
 # função para marcar a palavra na matriz
-def marcar_palavra_na_matriz(matriz, posicao_inicial, posicao_final):
-    tamanho_palavra = descobrir_tamanho_palavra(posicao_inicial, posicao_final) # descobrindo o tamanho da palavra
-    posicao = descobrir_posicao(posicao_inicial, posicao_final) # descobrindo a posição da palavra
+def matriz_marcar_palavra(matriz, posicao_inicial, posicao_final):
+    tamanho_palavra = palavras_descobrir_tamanho(posicao_inicial, posicao_final) # descobrindo o tamanho da palavra
+    posicao = palavras_descobrir_posicao(posicao_inicial, posicao_final) # descobrindo a posição da palavra
     if("invertida" in posicao): # verificando se a posição é invertida
         posicao = posicao.replace(" invertida", "") # removendo a palavra invertida da posição
         posicao_inicial, posicao_final = posicao_final, posicao_inicial # invertendo a posição inicial e final
@@ -53,10 +53,10 @@ def marcar_palavra_na_matriz(matriz, posicao_inicial, posicao_final):
     return matriz # retornando a matriz com a palavra marcada
 
 # função para marcar todas as palavras na matriz
-def marcar_todas_palavras_na_matriz(matriz, palavras):
+def matriz_marcar_todas_palavras(matriz, palavras):
     lista_palavras = list(palavras.keys()) # criando uma lista com as palavras que devem ser encontradas
     for palavra in lista_palavras: # percorrendo as palavras do dicionário
         posicao_inicial = palavras[palavra]['posicao']['inicial'] # obtendo a posição inicial da palavra
         posicao_final = palavras[palavra]['posicao']['final'] # obtendo a posição final da palavra
-        matriz = marcar_palavra_na_matriz(matriz, posicao_inicial, posicao_final) # marcando a palavra na matriz
+        matriz = matriz_marcar_palavra(matriz, posicao_inicial, posicao_final) # marcando a palavra na matriz
     return matriz # retornando a matriz com todas as palavras marcadas

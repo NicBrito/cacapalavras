@@ -80,34 +80,34 @@ def validar_posicao_palavra(matriz, palavras, palavra, linha_palavra, coluna_pal
     return False # retornando que a posição escolhida para a palavra não é permitida
 
 # função para escolher posição aleatória para a palavra
-def escolher_posicao_palavra(matriz, palavras, palavra, posicao, tamanho_linhas_matriz, tamanho_colunas_matriz, tamanho_palavra, sobreposicao):
+def escolher_posicao_palavra(matriz, palavras, palavra, posicao, quantidade_colunas, quantidade_linhas, tamanho_palavra, sobreposicao):
     linha_palavra = 0 # definindo zero como padrão para a linha da palavra
     coluna_palavra = 0 # definindo zero como padrão para a coluna da palavra
     while(True): # caso a posição escolhida para a palavra não seja permitida
         match posicao: # verificando a posição da palavra
             case "horizontal": # caso a posição seja horizontal
-                linha_palavra = random.randint(0, tamanho_colunas_matriz-1) # escolhendo linha aleatória para a palavra
-                coluna_palavra = random.randint(0, tamanho_linhas_matriz-tamanho_palavra) # escolhendo coluna aleatória para a palavra
+                linha_palavra = random.randint(0, quantidade_linhas-1) # escolhendo linha aleatória para a palavra
+                coluna_palavra = random.randint(0, quantidade_colunas-tamanho_palavra) # escolhendo coluna aleatória para a palavra
             case "vertical": # caso a posição seja vertical
-                linha_palavra = random.randint(0, tamanho_colunas_matriz-tamanho_palavra) # escolhendo linha aleatória para a palavra
-                coluna_palavra = random.randint(0, tamanho_linhas_matriz-1) # escolhendo coluna aleatória para a palavra
+                linha_palavra = random.randint(0, quantidade_linhas-tamanho_palavra) # escolhendo linha aleatória para a palavra
+                coluna_palavra = random.randint(0, quantidade_colunas-1) # escolhendo coluna aleatória para a palavra
             case "diagonal para direita": # caso a posição seja diagonal para a direita
-                linha_palavra = random.randint(0, tamanho_colunas_matriz-tamanho_palavra) # escolhendo linha aleatória para a palavra
-                coluna_palavra = random.randint(0, tamanho_linhas_matriz-tamanho_palavra) # escolhendo coluna aleatória para a palavra
+                linha_palavra = random.randint(0, quantidade_linhas-tamanho_palavra) # escolhendo linha aleatória para a palavra
+                coluna_palavra = random.randint(0, quantidade_colunas-tamanho_palavra) # escolhendo coluna aleatória para a palavra
             case "diagonal para esquerda": # caso a posição seja diagonal para a esquerda
-                linha_palavra = random.randint(0, tamanho_colunas_matriz-tamanho_palavra) # escolhendo linha aleatória para a palavra
-                coluna_palavra = random.randint(tamanho_palavra-1, tamanho_linhas_matriz-1) # escolhendo coluna aleatória para a palavra
+                linha_palavra = random.randint(0, quantidade_linhas-tamanho_palavra) # escolhendo linha aleatória para a palavra
+                coluna_palavra = random.randint(tamanho_palavra-1, quantidade_colunas-1) # escolhendo coluna aleatória para a palavra
         if(validar_posicao_palavra(matriz, palavras, palavra, linha_palavra, coluna_palavra, sobreposicao)): # verificar se a posição escolhida é permitida
             break # permitir a escolha da posição para a palavra
     return linha_palavra, coluna_palavra # retornando a linha e a coluna da palavra
 
 # função para colocar as palavras na posição escolhida
-def posicionar_palavra_na_matriz(matriz, palavras, palavra, posicao, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, sobreposicao):
+def posicionar_palavra_na_matriz(matriz, palavras, palavra, posicao, tamanho_palavra, quantidade_colunas, quantidade_linhas, sobreposicao):
     if("invertida" in posicao): # caso a posição seja invertida
         posicao = posicao.replace(" invertida", "") # removendo a palavra invertida da posição
         palavra = palavra[::-1] # invertendo a palavra
     while(True): # caso deva escolher uma nova posição para a palavra
-        linha_palavra, coluna_palavra = escolher_posicao_palavra(matriz, palavras, palavra, posicao, tamanho_linhas_matriz, tamanho_colunas_matriz, tamanho_palavra, sobreposicao) # escolhendo posicao aleatoria para a palavra
+        linha_palavra, coluna_palavra = escolher_posicao_palavra(matriz, palavras, palavra, posicao, quantidade_colunas, quantidade_linhas, tamanho_palavra, sobreposicao) # escolhendo posicao aleatoria para a palavra
         palavra_existente_na_matriz = obter_palavra_existente_na_matriz(matriz, posicao, tamanho_palavra, linha_palavra, coluna_palavra) # checar palavra que já existe nessa posição na matriz
         if(palavra_existente_na_matriz == list(palavra)): # caso a palavra existente na matriz seja igual a palavra
             return False, palavras # retornando que a palavra não pode ser colocada na matriz e o dicionário de palavras
@@ -116,13 +116,13 @@ def posicionar_palavra_na_matriz(matriz, palavras, palavra, posicao, tamanho_pal
             return True, palavras # retornando que a palavra foi colocada na matriz e o dicionário de palavras
 
 # verificando posições permitidas para a palavra
-def obter_posicoes_para_palavra(matriz, palavras, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, sobreposicao):
+def obter_posicoes_para_palavra(matriz, palavras, palavra, tamanho_palavra, quantidade_colunas, quantidade_linhas, sobreposicao):
     posicoes = [] # criando lista de posições
     for indice in range(0, 2): # caso precise mudar o estado da sobreposição
         if(sobreposicao): # caso a palavra possa sobrepor outra palavra
-            posicoes.extend(sobreposicao_verificar_posicoes(matriz, palavras, palavra, tamanho_linhas_matriz, tamanho_colunas_matriz)) # verificar quais posições pode ocorrer sobreposição
+            posicoes.extend(sobreposicao_verificar_posicoes(matriz, palavras, palavra, quantidade_colunas, quantidade_linhas)) # verificar quais posições pode ocorrer sobreposição
         if not (sobreposicao): # caso a palavra não possa sobrepor outra palavra
-            posicoes.extend(sem_sobreposicao_verificar_posicoes(matriz, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz)) # verificar posições permitidas para a palavra sem sobreposição
+            posicoes.extend(sem_sobreposicao_verificar_posicoes(matriz, tamanho_palavra, quantidade_colunas, quantidade_linhas)) # verificar posições permitidas para a palavra sem sobreposição
         if(posicoes == [] and indice == 0): # caso não haja posições permitidas para a palavra
             sobreposicao = not sobreposicao # inverter estado da sobreposição
         else: # caso haja posições permitidas para a palavra
@@ -130,34 +130,34 @@ def obter_posicoes_para_palavra(matriz, palavras, palavra, tamanho_palavra, tama
     return posicoes, sobreposicao # retornando lista de posições e o estado da sobreposição
 
 # função para escolher posição aleatória para a palavra
-def escolher_posicao_aleatoria(matriz, palavras, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, sobreposicao):
-    posicoes_permitidas, sobreposicao = obter_posicoes_para_palavra(matriz, palavras, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, sobreposicao) # posições permitidas para a palavra
+def escolher_posicao_aleatoria(matriz, palavras, palavra, tamanho_palavra, quantidade_colunas, quantidade_linhas, sobreposicao):
+    posicoes_permitidas, sobreposicao = obter_posicoes_para_palavra(matriz, palavras, palavra, tamanho_palavra, quantidade_colunas, quantidade_linhas, sobreposicao) # posições permitidas para a palavra
     if(posicoes_permitidas == []): # caso não haja posições permitidas para a palavra
         return "", sobreposicao # retornando que a palavra não pode ser colocada em nenhuma posição e se a palavra pode sobrepor outra palavra
     posicao = random.choice(posicoes_permitidas) # escolhendo posição aleatória para a palavra
     return posicao, sobreposicao # retornando a posição escolhida e se a palavra pode sobrepor outra palavra
 
 # função para colocar as palavras na matriz
-def inserir_palavra_na_matriz(matriz, palavras, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz):
+def inserir_palavra_na_matriz(matriz, palavras, palavra, tamanho_palavra, quantidade_colunas, quantidade_linhas):
     sobreposicao = random.choice([True, False]) # escolhendo aleatoriamente se a palavra vai sobrepor outra palavra
-    posicao, sobreposicao = escolher_posicao_aleatoria(matriz, palavras, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, sobreposicao) # escolhendo posição aleatória para a palavra
+    posicao, sobreposicao = escolher_posicao_aleatoria(matriz, palavras, palavra, tamanho_palavra, quantidade_colunas, quantidade_linhas, sobreposicao) # escolhendo posição aleatória para a palavra
     if(posicao == ""): # caso a palavra não possa ser colocada em nenhuma posição
         return False, palavras # recolocar as palavras na matriz
-    palavra_foi_colocada, palavras = posicionar_palavra_na_matriz(matriz, palavras, palavra, posicao, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz, sobreposicao) # colocando a palavra na matriz na posição escolhida
+    palavra_foi_colocada, palavras = posicionar_palavra_na_matriz(matriz, palavras, palavra, posicao, tamanho_palavra, quantidade_colunas, quantidade_linhas, sobreposicao) # colocando a palavra na matriz na posição escolhida
     if not (palavra_foi_colocada): # caso a palavra não tenha sido colocada na matriz
         return False, palavras # recolocar as palavras na matriz
     return True, palavras # não recolocar as palavras na matriz
 
 # colocando as palavras na matriz
-def inserir_palavras_na_matriz(matriz, palavras, tamanho_linhas_matriz, tamanho_colunas_matriz):
+def inserir_palavras_na_matriz(matriz, palavras, quantidade_colunas, quantidade_linhas):
     lista_de_palavras = list(palavras.keys()) # criando lista de palavras
     while(True): # caso precise recolocar as palavras na matriz
         contador = 0 # criando contador
         for palavra in lista_de_palavras: # para cada palavra na lista de palavras
             tamanho_palavra = len(palavra) # tamanho da palavra
-            palavra_foi_colocada, palavras = inserir_palavra_na_matriz(matriz, palavras, palavra, tamanho_palavra, tamanho_linhas_matriz, tamanho_colunas_matriz) # colocando a palavra na matriz
+            palavra_foi_colocada, palavras = inserir_palavra_na_matriz(matriz, palavras, palavra, tamanho_palavra, quantidade_colunas, quantidade_linhas) # colocando a palavra na matriz
             if not (palavra_foi_colocada): # caso a palavra não possa ser colocada na matriz
-                matriz = matriz_criar_vazia(tamanho_linhas_matriz, tamanho_colunas_matriz) # esvaziando a matriz
+                matriz = matriz_criar_vazia(quantidade_colunas, quantidade_linhas) # esvaziando a matriz
                 break # recolocar as palavras na matriz
             contador += 1 # incrementando o contador
         if(contador == len(palavras)): # caso todas as palavras tenham sido colocadas na matriz
@@ -166,11 +166,11 @@ def inserir_palavras_na_matriz(matriz, palavras, tamanho_linhas_matriz, tamanho_
 
 # função principal
 def main():
-    tamanho_matriz, tamanho_linhas_matriz, tamanho_colunas_matriz = matriz_solicitar_tamanho() # definindo o tamanho da matriz
-    matriz = matriz_criar_vazia(tamanho_linhas_matriz, tamanho_colunas_matriz) # criando a matriz do tamanho definido e a preenchendo com vazios
-    palavras = palavras_coletar(tamanho_matriz) # criando as palavras
+    tamanho_menor_matriz, quantidade_colunas, quantidade_linhas = matriz_solicitar_tamanho() # definindo o tamanho da matriz
+    matriz = matriz_criar_vazia(quantidade_colunas, quantidade_linhas) # criando a matriz do tamanho definido e a preenchendo com vazios
+    palavras = palavras_coletar(tamanho_menor_matriz) # criando as palavras
     palavras = palavras_reordenar(palavras, "maior para o menor") # reordenando as palavras do maior para o menor
-    matriz, palavras = inserir_palavras_na_matriz(matriz, palavras, tamanho_linhas_matriz, tamanho_colunas_matriz) # colocando as palavras na matriz
-    matriz = matriz_preencher_com_letras_aleatorias(matriz, tamanho_linhas_matriz, tamanho_colunas_matriz) # preenchendo a matriz com letras aleatorias no lugar dos vazios
+    matriz, palavras = inserir_palavras_na_matriz(matriz, palavras, quantidade_colunas, quantidade_linhas) # colocando as palavras na matriz
+    matriz = matriz_preencher_com_letras_aleatorias(matriz, quantidade_colunas, quantidade_linhas) # preenchendo a matriz com letras aleatorias no lugar dos vazios
     palavras = palavras_reordenar(palavras, "alfabética") # reordenando as palavras em ordem alfabética
     return matriz, palavras # retornando a matriz e as palavras

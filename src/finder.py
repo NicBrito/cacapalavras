@@ -38,7 +38,7 @@ def main(matriz, palavras):
             break # encerrando a procura de palavras
         os.system('cls' if os.name == 'nt' else 'clear') # limpando a tela
         exibir_cacapalavras(matriz, palavras) # exibindo o caça-palavras
-        posicao_inicial, posicao_final = buscador_solicitar_posicao(len(matriz)) # pedindo a posição da palavra ao usuário
+        posicao_inicial, posicao_final = buscador_solicitar_posicao(matriz) # pedindo a posição da palavra ao usuário
         if(not posicao_inicial or not posicao_final): # verificando se o usuário deseja encerrar a procura de palavras
             matriz = matriz_marcar_todas_palavras(matriz, palavras) # marcando todas as palavras na matriz
             encerramento(matriz, palavras, erros) # encerrando a procura de palavras

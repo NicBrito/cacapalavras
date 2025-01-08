@@ -7,23 +7,25 @@ def sobreposicao_contar_posicoes_permitidas(matriz, palavra, indice_letra_na_pal
 # função para verificar se o lado direito da palavra em relação a letra escolhida é permitido
 def sobreposicao_verificar_lado_direito(matriz, palavra, tamanho_palavra_direita, indice_letra_na_palavra, linha, coluna, posicao, palavra_invertida):
     contador = 0 # criando contador
+    quantidade_linhas = len(matriz) # quantidade de linhas da matriz
+    quantidade_colunas = len(matriz[0]) # quantidade de colunas da matriz
     for indice in range(0, tamanho_palavra_direita): # percorrendo a quantidade de letras do lado direito da palavra
         match posicao: # verificando a posição da palavra
             case "horizontal": # caso a posição seja horizontal
-                if not (coluna+1 < len(matriz[linha])): # caso o próximo valor da coluna passe o limite da matriz
+                if not (coluna+1 < quantidade_colunas): # caso o próximo valor da coluna passe o limite da matriz
                     return False # retornando que o lado direito da palavra não é permitido
                 coluna += 1 # incrementando a coluna
             case "vertical": # caso a posição seja vertical
-                if not (linha+1 < len(matriz[linha])): # caso o próximo valor da linha passe o limite da matriz
+                if not (linha+1 < quantidade_linhas): # caso o próximo valor da linha passe o limite da matriz
                     return False # retornando que o lado direito da palavra não é permitido
                 linha += 1 # incrementando a linha
             case "diagonal para direita": # caso a posição seja diagonal para a direita
-                if not (linha+1 < len(matriz[linha]) and coluna+1 < len(matriz[linha])): # caso o próximo valor da linha ou da coluna passe o limite da matriz
+                if not (linha+1 < quantidade_linhas and coluna+1 < quantidade_colunas): # caso o próximo valor da linha ou da coluna passe o limite da matriz
                     return False # retornando que o lado direito da palavra não é permitido
                 linha += 1 # incrementando a linha
                 coluna += 1 # incrementando a coluna
             case "diagonal para esquerda": # caso a posição seja diagonal para a esquerda
-                if not (linha+1 < len(matriz[linha]) and coluna-1 >= 0): # caso o próximo valor da linha ou da coluna passe o limite da matriz
+                if not (linha+1 < quantidade_linhas and coluna-1 >= 0): # caso o próximo valor da linha ou da coluna passe o limite da matriz
                     return False # retornando que o lado direito da palavra não é permitido
                 linha += 1 # incrementando a linha
                 coluna -= 1 # decrementando a coluna
@@ -40,6 +42,7 @@ def sobreposicao_verificar_lado_direito(matriz, palavra, tamanho_palavra_direita
 # função para verificar se o lado esquerdo da palavra em relação a letra escolhida é permitido
 def sobreposicao_verificar_lado_esquerdo(matriz, palavra, tamanho_palavra_esquerda, indice_letra_na_palavra, linha, coluna, posicao, palavra_invertida):
     contador = 0 # criando contador
+    quantidade_colunas = len(matriz[0]) # quantidade de colunas da matriz
     for indice in range(0, tamanho_palavra_esquerda): # percorrendo a quantidade de letras do lado esquerdo da palavra
         match posicao: # verificando a posição da palavra
             case "horizontal": # caso a posição seja horizontal
@@ -56,7 +59,7 @@ def sobreposicao_verificar_lado_esquerdo(matriz, palavra, tamanho_palavra_esquer
                 linha -= 1 # decrementando a linha
                 coluna -= 1 # decrementando a coluna
             case "diagonal para esquerda": # caso a posição seja diagonal para a esquerda
-                if not (linha-1 >= 0 and coluna+1 < len(matriz[linha])): # caso o próximo valor da linha ou da coluna passe o limite da matriz
+                if not (linha-1 >= 0 and coluna+1 < quantidade_colunas): # caso o próximo valor da linha ou da coluna passe o limite da matriz
                     return False # retornando que o lado esquerdo da palavra não é permitido
                 linha -= 1 # decrementando a linha
                 coluna += 1 # incrementando a coluna
@@ -106,11 +109,11 @@ def sobreposicao_obter_posicoes(matriz, palavras, palavra, letra_na_matriz, linh
     return posicoes # retornando lista de posições
 
 # função para verificar se a matriz permite sobreposição
-def sobreposicao_verificar_posicoes(matriz, palavras, palavra, tamanho_linhas_matriz, tamanho_colunas_matriz):
+def sobreposicao_verificar_posicoes(matriz, palavras, palavra, quantidade_colunas, quantidade_linhas):
     posicoes = [] # criando lista de posições
     posicoes_retornadas = [] # criando lista de posições retornadas
-    for linha in range(0, tamanho_colunas_matriz): # percorrendo cada linha da matriz
-        for coluna in range(0, tamanho_linhas_matriz): # percorrendo cada coluna da linha
+    for linha in range(0, quantidade_linhas): # percorrendo cada linha da matriz
+        for coluna in range(0, quantidade_colunas): # percorrendo cada coluna da linha
             letra_na_matriz = matriz[linha][coluna] # letra contida na posição atual da matriz
             if(letra_na_matriz in palavras[palavra]["letras"]): # caso a letra na matriz esteja contida na palavra
                 posicoes_retornadas.extend(sobreposicao_obter_posicoes(matriz, palavras, palavra, letra_na_matriz, linha, coluna)) # verificar quais posições permitem sobreposição

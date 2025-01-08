@@ -3,19 +3,19 @@ from constants import LETRAS
 from words import palavras_descobrir_tamanho, palavras_descobrir_posicao
 
 # criando a matriz do tamanho definido e a preenchendo com vazios
-def matriz_criar_vazia(tamanho_linhas_matriz, tamanho_colunas_matriz):
+def matriz_criar_vazia(quantidade_colunas, quantidade_linhas):
     matriz = [] # criando matriz vazia
-    for linha in range(0, tamanho_colunas_matriz): # percorrendo linha por linha da matriz
+    for linha in range(0, quantidade_linhas): # percorrendo linha por linha da matriz
         linha_vazia = [] # criando linha vazia
-        for coluna in range(0, tamanho_linhas_matriz): # percorrendo coluna por coluna da matriz
+        for coluna in range(0, quantidade_colunas): # percorrendo coluna por coluna da matriz
             linha_vazia.append("") # adicionando um espaço vazio na linha
         matriz.append(linha_vazia) # adicionando linha na matriz
     return matriz # retornando matriz
 
 # preenchendo a matriz com letras aleatorias no lugar dos vazios
-def matriz_preencher_com_letras_aleatorias(matriz, tamanho_linhas_matriz, tamanho_colunas_matriz):
-    for linha in range(0, tamanho_colunas_matriz): # percorrendo linha por linha da matriz
-        for coluna in range(0, tamanho_linhas_matriz): # percorrendo coluna por coluna da matriz
+def matriz_preencher_com_letras_aleatorias(matriz, quantidade_colunas, quantidade_linhas):
+    for linha in range(0, quantidade_linhas): # percorrendo linha por linha da matriz
+        for coluna in range(0, quantidade_colunas): # percorrendo coluna por coluna da matriz
             if(matriz[linha][coluna] == ""): # caso a posição da matriz seja um vazio
                 letra_aleatoria = random.choice(LETRAS) # escolhendo letra aleatoria
                 matriz[linha][coluna] = letra_aleatoria.upper() # adicionando letra aleatoria na linha
@@ -24,7 +24,7 @@ def matriz_preencher_com_letras_aleatorias(matriz, tamanho_linhas_matriz, tamanh
 # função para manter apenas as palavras marcadas na matriz
 def matriz_manter_apenas_palavras_marcadas(matriz):
     for linha in range(0, len(matriz)): # percorrendo as linhas da matriz
-        for coluna in range(0, len(matriz)): # percorrendo as colunas da matriz
+        for coluna in range(0, len(matriz[0])): # percorrendo as colunas da matriz
             if not (matriz[linha][coluna] == matriz[linha][coluna].lower()): # verificando se a letra não está marcada
                 matriz[linha][coluna] = " " # removendo letra não marcada
     return matriz # retornando a matriz com apenas as palavras marcadas

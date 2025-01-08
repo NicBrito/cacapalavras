@@ -34,8 +34,8 @@ def palavras_registrar(palavras, palavra):
     return palavras # retornando dicionário de palavras
 
 # verificando se a palavra possui um tamanho permitido
-def palavras_tamanho(palavra_digitada, tamanho_matriz):
-    if(1 < len(palavra_digitada) <= tamanho_matriz): # caso o usuário digite uma palavra que possua um tamanho permitido
+def palavras_tamanho(palavra_digitada, tamanho_menor_matriz):
+    if(1 < len(palavra_digitada) <= tamanho_menor_matriz): # caso o usuário digite uma palavra que possua um tamanho permitido
         return True # retornando que a palavra possui um tamanho permitido
     print("A palavra possui um tamanho não permitido!") # informando que a palavra possui um tamanho não permitido
     return False # retornando que a palavra possui um tamanho não permitido

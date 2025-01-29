@@ -1,9 +1,9 @@
 import os
-from display import exibir_cacapalavras
-from input_handlers import buscador_solicitar_posicao
-from matrix import matriz_marcar_palavra, matriz_marcar_todas_palavras, matriz_manter_apenas_palavras_marcadas
-from core import obter_palavra_existente_na_matriz
-from words import palavras_marcar_no_dicionario, palavras_descobrir_tamanho, palavras_descobrir_posicao
+from .display import exibir_cacapalavras
+from .input_handlers import buscador_solicitar_posicao
+from .matrix import matriz_marcar_palavra, matriz_marcar_todas_palavras, matriz_manter_apenas_palavras_marcadas
+from .core import obter_palavra_existente_na_matriz
+from .words import palavras_marcar_no_dicionario, palavras_descobrir_tamanho, palavras_descobrir_posicao
 
 # função para obter a palavra existente na matriz na posição dita pelo usuário
 def obter_palavra_existente_na_matriz_na_posicao(matriz, posicao_inicial, posicao_final):

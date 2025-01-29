@@ -1,6 +1,6 @@
 import random
-from constants import LETRAS
-from words import palavras_descobrir_tamanho, palavras_descobrir_posicao
+from .constants import LETRAS
+from .words import palavras_descobrir_tamanho, palavras_descobrir_posicao
 
 # criando a matriz do tamanho definido e a preenchendo com vazios
 def matriz_criar_vazia(quantidade_colunas, quantidade_linhas):

@@ -1,5 +1,5 @@
-from utils import verificar_tentativas_restantes, validar_posicao_de_entrada, transformar_string_em_tupla, validar_posicoes_da_palavra
-from words import palavras_remover_acentos, palavras_finalizar_coleta, palavras_apenas_letras, palavras_existe, palavras_tamanho, palavras_registrar
+from .utils import verificar_tentativas_restantes, validar_posicao_de_entrada, transformar_string_em_tupla, validar_posicoes_da_palavra
+from .words import palavras_remover_acentos, palavras_finalizar_coleta, palavras_apenas_letras, palavras_existe, palavras_tamanho, palavras_registrar
 
 # definindo tamanho da matriz
 def matriz_solicitar_tamanho():

@@ -1,4 +1,4 @@
-from constants import ACENTOS
+from .constants import ACENTOS
 
 # função para reordenar as palavras no dicionário
 def palavras_reordenar(palavras, ordenacao):

@@ -1,9 +1,9 @@
 import random
-from input_handlers import matriz_solicitar_tamanho, palavras_coletar
-from matrix import matriz_criar_vazia, matriz_preencher_com_letras_aleatorias
-from words import palavras_reordenar, palavras_registrar_posicoes
-from overlap_validators import sobreposicao_verificar_posicoes
-from no_overlap_validators import sem_sobreposicao_verificar_posicoes
+from .input_handlers import matriz_solicitar_tamanho, palavras_coletar
+from .matrix import matriz_criar_vazia, matriz_preencher_com_letras_aleatorias
+from .words import palavras_reordenar, palavras_registrar_posicoes
+from .overlap_validators import sobreposicao_verificar_posicoes
+from .no_overlap_validators import sem_sobreposicao_verificar_posicoes
 
 # função para colocar as palavras na matriz
 def inserir_palavra_na_posicao_escolhida(matriz, palavras, palavra, posicao, linha_palavra, coluna_palavra):

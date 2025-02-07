@@ -1,7 +1,7 @@
 import os
 from ..word_search.utils import verificar_tentativas_restantes
 from ..word_search.words import palavras_finalizar_coleta as finalizar_cadastro
-from .utils import usuario_existe, usuario_salvar
+from .login_utils import usuario_existe, usuario_salvar
 
 # função para exibir o cabeçalho
 def exibir_cabecalho():
@@ -35,6 +35,9 @@ def main():
         else: # se a senha repetida for diferente da senha criada
             print("A senhas digitadas são diferentes! Digite as senhas novamente.\n") # exibir mensagem de erro
             tentativas -= 1 # decrementando a quantidade de tentativas
-    usuario_conta = {"usuario_nome": usuario_nome, "usuario_senha": usuario_senha} # criando a conta do usuário
+    usuario_conta = {"usuario_nome": usuario_nome,
+                     "usuario_senha": usuario_senha,
+                     "cacapalavras_salvos": 0,
+                     "listas_palavras": 0} # criando a conta do usuário
     usuario_salvar(usuario_conta) # salvando a conta do usuário no arquivo
     return True # informando que o usuário foi cadastrado

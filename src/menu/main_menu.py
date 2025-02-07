@@ -1,6 +1,6 @@
 import os
 from ..word_search.utils import verificar_tentativas_restantes
-from .create_account import main as create_account
+from .create_account import main as criar_conta
 from .login import main as login
 
 # função para exibir o cabeçalho
@@ -21,22 +21,25 @@ def main():
         opcao_escolhida = input("Digite a opção que deseja acessar: ") # opções disponíveis para o usuário
         match opcao_escolhida: # verificando a opção escolhida pelo usuário
             case '1': # caso o usuário escolha a opção 1
-                if(create_account()): # chamando a função para criar uma conta
-                    os.system('cls' if os.name == 'nt' else 'clear') # limpando a tela
+                retorno_criar_conta = criar_conta() # chamando a função para criar uma conta
+                os.system('cls' if os.name == 'nt' else 'clear') # limpando a tela
+                if(retorno_criar_conta): # caso a conta seja criada
                     print("Conta criada com sucesso.\n") # informando que a conta foi criada com sucesso
-                else: # caso o cadastro tenha sido cancelado
-                    os.system('cls' if os.name == 'nt' else 'clear') # limpando a tela
+                else: # caso o cadastro seja cancelado
                     print("Cadastro cancelado!\n") # informando que o cadastro foi cancelado
             case '2': # caso o usuário escolha a opção 2
-                match login():
-                    case "Login cancelado":
-                        os.system('cls' if os.name == 'nt' else 'clear') # limpando a tela
+                retorno_login = login() # chamando a função para fazer login
+                os.system('cls' if os.name == 'nt' else 'clear') # limpando a tela
+                match retorno_login: # verificando o retorno da função de login
+                    case "Login cancelado": # caso o login seja cancelado
                         print("Login cancelado!\n") # informando que o login foi cancelado
-                    case "Conta deslogada":
-                        os.system('cls' if os.name == 'nt' else 'clear') # limpando a tela
+                    case "Conta deslogada": # caso a conta seja deslogada
                         print("Conta deslogada!\n") # informando que a conta foi deslogada
-                    case "Conta apagada":
-                        os.system('cls' if os.name == 'nt' else 'clear') # limpando a tela
+                    case "Conta e dados apagados": # caso a conta e os dados sejam apagados
+                        print("Conta e dados apagados!\n") # informando que a conta e os dados foram apagados
+                    case "Conta apagada, dados mantidos": # caso a conta seja apagada, mas os dados sejam mantidos
+                        print("Conta apagada, dados mantidos!\n") # informando que a conta foi apagada, mas os dados foram mantidos
+                    case "Conta apagada": # caso a conta seja apagada e não haja dados
                         print("Conta apagada!\n") # informando que a conta foi apagada
             case '3': # caso o usuário escolha a opção 3
                 print("\nFinalizando o programa...") # informando ao usuário que o programa será finalizado

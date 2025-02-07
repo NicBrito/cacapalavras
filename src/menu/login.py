@@ -1,7 +1,7 @@
 import os
 from ..word_search.utils import verificar_tentativas_restantes
 from ..word_search.words import palavras_finalizar_coleta as finalizar_login
-from .utils import conta_existe
+from .login_utils import conta_existe, conta_dados
 from .login_menu import main as login_menu
 
 # função para exibir o cabeçalho
@@ -26,7 +26,7 @@ def main():
         usuario_conta = {"usuario_nome": usuario_nome, "usuario_senha": usuario_senha} # criando a conta do usuário
         if(conta_existe(usuario_conta)): # se a conta do usuário existir
             print("Login efetuado com sucesso!") # exibir mensagem de sucesso
-            return login_menu(usuario_conta) # chamando a função do menu de login
+            return login_menu(conta_dados(usuario_conta)) # chamando a função do menu de login
         else: # se a conta do usuário não existir
             print("Usuário ou senha inválidos! Tente novamente.\n") # exibir mensagem de erro
             tentativas -= 1 # decrementando a quantidade de tentativas

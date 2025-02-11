@@ -1,7 +1,7 @@
 import os
 from ..word_search.utils import verificar_tentativas_restantes
 from .login_headers import cabecalho_1, cabecalho_2, cabecalho_3, cabecalho_4, opcoes_menu
-from .login_utils import conta_apagar, conta_carregar_dados, usuario_possui_dados
+from .login_utils import conta_apagar, conta_apagar_dados, conta_carregar_dados, usuario_possui_dados
 from .words_list_menu import main as words_list_menu
 from .words_list_utils import contar_listas_palavras
 
@@ -43,6 +43,7 @@ def main(usuario_conta):
             case 'Ver lista de palavras salvas': # caso o usuário escolha a opção "Ver lista de palavras salvas"
                 if(words_list_menu(usuario_conta, acao_retornada) == "Listas apagadas"): # caso não haja listas de palavras salvas
                     print("Todas as listas de palavras foram apagadas!\n") # informando ao usuário que todas as listas de palavras foram apagadas
+                    conta_apagar_dados(usuario_conta) # apagando os dados da conta do usuário
             case 'Sair da conta': # caso o usuário escolha a opção "Sair da conta"
                 return "Conta deslogada" # retornando ao menu principal
             case 'Sair do programa': # caso o usuário escolha a opção "Sair do programa"

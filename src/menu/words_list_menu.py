@@ -58,10 +58,16 @@ def main(usuario_conta, acao_escolhida):
                         print("Lista de palavras editada com sucesso!\n") # informando ao usuário que a lista de palavras foi editada
                     elif(retorno_editar_lista == 'Lista não encontrada'): # caso a lista de palavras não seja encontrada
                         print("Lista de palavras não encontrada!\n") # informando ao usuário que a lista de palavras não foi encontrada
+                    elif(retorno_editar_lista == 'Lista vazia'): # caso a lista de palavras esteja vazia
+                        print("Lista de palavras apagada!\n") # informando ao usuário que a lista de palavras foi apagada
+                        conta_atualizar(usuario_conta, "remover listas_palavras") # atualizando a quantidade de listas de palavras
                     elif(retorno_editar_lista == 'Cancelar edição'): # caso a edição da lista de palavras seja cancelada
                         os.system('cls' if os.name == 'nt' else 'clear') # limpando a tela
                         acao_escolhida = 'Ver lista de palavras salvas' # retornando à lista de palavras salvas
                         break # finalizando a edição da lista de palavras
+                    if(usuario_conta["listas_palavras"] == 0): # caso o usuário não tenha listas de palavras salvas
+                        os.system('cls' if os.name == 'nt' else 'clear') # limpando a tela
+                        return "Listas apagadas" # retornando que as listas de palavras foram apagadas
                     print("EDITAR LISTA DE PALAVRAS\n"
                           "\nPara cancelar, digite ENTER\n") # informando ao usuário que a edição de uma lista de palavras foi iniciada
                     retorno_editar_lista = editar_lista_palavras(usuario_conta) # editando uma lista de palavras

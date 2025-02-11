@@ -45,6 +45,33 @@ def usuario_possui_dados(usuario_conta):
     USER_DATA_PATH = os.path.join("data/user/", usuario_conta["usuario_nome"]) # caminho da pasta de dados do usuário
     return os.path.exists(USER_DATA_PATH) # retornando se a pasta de dados do usuário existe
 
+# função para verificar se existe usuários no arquivo
+def usuarios_existe():
+    try: # tentando abrir o arquivo de usuários
+        with open(FILE_PATH, "r") as arquivo: # abrindo o arquivo de usuários
+            usuarios = json.load(arquivo) # carregando os usuários do arquivo
+            if(usuarios): # se houver usuários no arquivo
+                return True # retornar que existem usuários no arquivo
+    except FileNotFoundError: # se o arquivo de usuários não existir
+        return False # retornar que não existem usuários no arquivo
+    return False # retornar que não existem usuários no arquivo
+
+# função para remover todos os usuários do arquivo
+def usuarios_remover():
+    try: # tentando abrir o arquivo de usuários
+        with open(FILE_PATH, "r") as arquivo: # abrindo o arquivo de usuários
+            usuarios = json.load(arquivo) # carregando os usuários do arquivo
+    except FileNotFoundError: # se o arquivo de usuários não existir
+        return # caso o arquivo de usuários não exista, não é necessário remover os usuários
+    usuarios.clear() # removendo todos os usuários da lista de usuários
+    with open(FILE_PATH, "w") as arquivo: # abrindo o arquivo de usuários
+        json.dump(usuarios, arquivo, indent = 4) # salvando a lista de usuários no arquivo
+
+# função para apagar arquivo de usuários
+def usuarios_apagar_arquivo():
+    usuarios_remover() # apagando todos os usuários do arquivo
+    os.remove(FILE_PATH) # apagando o arquivo de usuários
+
 # função para verificar se a conta do usuário existe
 def conta_existe(usuario_conta):
     try: # tentando abrir o arquivo de usuários
@@ -93,12 +120,19 @@ def conta_apagar(usuario_conta):
                 tentativas -= 1 # decrementando a quantidade de tentativas
                 continue # solicitando ao usuário que escolha uma nova opção
             usuario_remover(usuario_conta) # apagando a conta do usuário
+            if not (usuarios_existe()): # caso não haja usuários no arquivo
+                usuarios_apagar_arquivo() # apagando o arquivo de usuários
             if(opcao_apagar_todos_dados == '1'): # caso o usuário escolha a opção "Sim"
                 conta_apagar_dados(usuario_conta) # apagando os dados da conta do usuário
                 return "Conta e dados apagados" # retornando ao menu principal
             return "Conta apagada, dados mantidos" # retornando ao menu principal
     usuario_remover(usuario_conta) # apagando a conta do usuário
-    conta_apagar_dados(usuario_conta) # apagando os dados da conta do usuário
+    try: # caso o arquivo de dados do usuário ainda exista
+        conta_apagar_dados(usuario_conta) # apagando os dados da conta do usuário
+    except FileNotFoundError: # caso o arquivo de dados do usuário não exista
+        pass # não é necessário apagar os dados da conta do usuário
+    if not (usuarios_existe()): # caso não haja usuários no arquivo
+        usuarios_apagar_arquivo() # apagando o arquivo de usuários
     return "Conta apagada" # retornando ao menu principal
 
 # função para atualizar a conta do usuário

@@ -134,6 +134,46 @@ def encontrar_palavra_lista_palavras(lista_palavras, palavra):
             return True # retornar que a palavra foi encontrada
     return False # retornar que a palavra não foi encontrada
 
+# função para remover uma palavra de uma lista de palavras
+def remover_palavra_lista_palavras(usuario_conta, lista_palavras):
+    os.system('cls' if os.name == 'nt' else 'clear') # limpando a tela
+    exibir_lista_palavras(lista_palavras) # exibindo a lista de palavras selecionada
+    print("EDITAR LISTA DE PALAVRAS\n"
+          "\nPara cancelar, digite ENTER\n") # informando ao usuário que a remoção de uma palavra na lista de palavras foi iniciada e como cancelar
+    tentativas = 3 # definindo a quantidade de tentativas para digitar a palavra
+    while(verificar_tentativas_restantes(tentativas)): # caso deva digitar a palavra
+        palavra = palavras_remover_acentos(str(input('Digite a palavra que deseja remover: ')).upper().replace(" ", "")) # pegando a palavra digitada, convertendo para maiúsculo e removendo espaços e acentos
+        if(palavras_finalizar_coleta(palavra)): # caso o usuário não digite nada ou apenas espaços
+            return 'Cancelar remoção' # cancelando a remoção da palavra na lista de palavras
+        if not (encontrar_palavra_lista_palavras(lista_palavras, palavra)): # caso a palavra não exista
+            print("Palavra não encontrada!\n") # informando ao usuário que a palavra não foi encontrada
+            tentativas -= 1 # decrementando a quantidade de tentativas
+            continue # solicitando ao usuário que digite uma nova palavra
+        atualizar_lista_palavras(usuario_conta, lista_palavras, "remover lista_palavras") # removendo a lista de palavras
+        lista_palavras["palavras"] = [palavra_lista for palavra_lista in lista_palavras["palavras"] if palavra_lista != palavra] # removendo a palavra da lista de palavras
+        atualizar_lista_palavras(usuario_conta, lista_palavras, "adicionar lista_palavras") # atualizando a lista de palavras
+        return 'Palavra removida' # retornando que a palavra foi removida
+
+# função para adicionar uma palavra a uma lista de palavras
+def adicionar_palavra_lista_palavras(usuario_conta, lista_palavras):
+    os.system('cls' if os.name == 'nt' else 'clear') # limpando a tela
+    exibir_lista_palavras(lista_palavras) # exibindo a lista de palavras selecionada
+    print("EDITAR LISTA DE PALAVRAS\n"
+          "\nPara cancelar, digite ENTER\n") # informando ao usuário que a adição de uma palavra na lista de palavras foi iniciada e como cancelar
+    tentativas = 3 # definindo a quantidade de tentativas para digitar a palavra
+    while(verificar_tentativas_restantes(tentativas)): # caso deva digitar a palavra
+        palavra = palavras_remover_acentos(str(input('Digite a palavra que deseja adicionar: ')).upper().replace(" ", "")) # pegando a palavra digitada, convertendo para maiúsculo e removendo espaços e acentos
+        if(palavras_finalizar_coleta(palavra)): # caso o usuário não digite nada ou apenas espaços
+            return 'Cancelar adição' # cancelando a adição da palavra na lista de palavras
+        if(encontrar_palavra_lista_palavras(lista_palavras, palavra)): # caso a palavra já exista
+            print("Palavra já existe na lista de palavras!\n") # informando ao usuário que a palavra já existe
+            tentativas -= 1 # decrementando a quantidade de tentativas
+            continue # solicitando ao usuário que digite uma nova palavra
+        atualizar_lista_palavras(usuario_conta, lista_palavras, "remover lista_palavras") # removendo a lista de palavras
+        lista_palavras["palavras"].append(palavra) # adicionando a palavra à lista de palavras
+        atualizar_lista_palavras(usuario_conta, lista_palavras, "adicionar lista_palavras") # atualizando a lista de palavras
+        return 'Palavra adicionada' # retornando que a palavra foi adicionada
+
 # função para trocar uma palavra de uma lista de palavras
 def trocar_palavra_lista_palavras(usuario_conta, lista_palavras, palavra):
     tentativas = 3 # definindo a quantidade de tentativas para digitar a nova palavra
@@ -144,11 +184,11 @@ def trocar_palavra_lista_palavras(usuario_conta, lista_palavras, palavra):
         if(encontrar_palavra_lista_palavras(lista_palavras, palavra_nova)): # caso a nova palavra já exista
             print("Palavra já existe na lista de palavras!\n") # informando ao usuário que a nova palavra já existe
             tentativas -= 1 # decrementando a quantidade de tentativas
-        else: # caso a nova palavra não exista
-            atualizar_lista_palavras(usuario_conta, lista_palavras, "remover lista_palavras") # removendo a lista de palavras
-            lista_palavras["palavras"] = [palavra_nova if palavra == palavra_lista else palavra_lista for palavra_lista in lista_palavras["palavras"]] # trocando a palavra da lista de palavras
-            atualizar_lista_palavras(usuario_conta, lista_palavras, "adicionar lista_palavras") # atualizando a lista de palavras
-            return 'Palavra editada' # retornando que a palavra foi editada
+            continue # solicitando ao usuário que digite uma nova palavra
+        atualizar_lista_palavras(usuario_conta, lista_palavras, "remover lista_palavras") # removendo a lista de palavras
+        lista_palavras["palavras"] = [palavra_nova if palavra == palavra_lista else palavra_lista for palavra_lista in lista_palavras["palavras"]] # trocando a palavra da lista de palavras
+        atualizar_lista_palavras(usuario_conta, lista_palavras, "adicionar lista_palavras") # atualizando a lista de palavras
+        return 'Palavra editada' # retornando que a palavra foi editada
 
 # função para editar palavras de uma lista de palavras
 def editar_lista_palavras_palavras(usuario_conta, lista_palavras):
@@ -164,12 +204,11 @@ def editar_lista_palavras_palavras(usuario_conta, lista_palavras):
         if not (encontrar_palavra_lista_palavras(lista_palavras, palavra_digitada)): # caso a palavra não exista
             print("Palavra não encontrada!\n") # informando ao usuário que a palavra não foi encontrada
             tentativas -= 1 # decrementando a quantidade de tentativas
-        else: # caso a palavra exista
-            retorno_trocar_palavras = trocar_palavra_lista_palavras(usuario_conta, lista_palavras, palavra_digitada) # trocando a palavra da lista de palavras
-            if(retorno_trocar_palavras == 'Palavra editada'): # caso a palavra seja editada
-                return 'Palavra editada' # retornando que a palavra foi editada
-            elif(retorno_trocar_palavras == 'Cancelar edição'): # caso a edição da palavra seja cancelada
-                return 'Cancelar edição' # cancelando a edição da palavra
+            continue # solicitando ao usuário que digite uma nova palavra
+        retorno_trocar_palavras = trocar_palavra_lista_palavras(usuario_conta, lista_palavras, palavra_digitada) # trocando a palavra da lista de palavras
+        if(retorno_trocar_palavras == 'Cancelar edição'): # caso a edição da palavra seja cancelada
+            return 'Cancelar edição' # cancelando a edição da palavra
+        return 'Palavra editada' # retornando que a palavra foi editada
 
 # função para editar nome de uma lista de palavras
 def editar_lista_palavras_nome(usuario_conta, lista_palavras):
@@ -185,8 +224,8 @@ def editar_lista_palavras_nome(usuario_conta, lista_palavras):
         if(lista_palavras_existe(usuario_conta, novo_nome)): # caso o novo nome da lista de palavras já exista
             print("Nome já está em uso!\n") # informando ao usuário que o novo nome da lista de palavras já existe
             tentativas -= 1 # decrementando a quantidade de tentativas
-        else: # caso o novo nome da lista de palavras não exista
-            break # finalizando a digitação do novo nome da lista de palavras
+            continue # solicitando ao usuário que digite um novo nome da lista de palavras
+        break # finalizando a digitação do novo nome da lista de palavras
     atualizar_lista_palavras(usuario_conta, lista_palavras, "remover lista_palavras") # removendo a lista de palavras
     lista_palavras["lista_nome"] = novo_nome # atualizando o nome da lista de palavras
     atualizar_lista_palavras(usuario_conta, lista_palavras, "adicionar lista_palavras") # adicionando a lista de palavras
@@ -197,7 +236,9 @@ def exibir_opcoes_edicao_lista_palavras():
     print("EDITAR LISTA DE PALAVRAS\n\n"
           "1- EDITAR NOME DA LISTA DE PALAVRAS\n"
           "2- EDITAR PALAVRAS DA LISTA DE PALAVRAS\n"
-          "3- VOLTAR\n") # exibindo as opções de edição da lista de palavras
+          "3- ADICIONAR PALAVRA NA LISTA DE PALAVRAS\n"
+          "4- REMOVER PALAVRA DA LISTA DE PALAVRAS\n"
+          "5- VOLTAR\n") # exibindo as opções de edição da lista de palavras
 
 # função para exibir e editar a lista de palavras selecionada
 def editar_lista_palavras_selecionada(usuario_conta, lista_nome):
@@ -222,15 +263,41 @@ def editar_lista_palavras_selecionada(usuario_conta, lista_nome):
                 continue # solicitando ao usuário que escolha uma nova opção de edição da lista de palavras
         elif(opcao_escolhida == '2'): # caso o usuário escolha a opção "Editar palavras da lista de palavras"
             retorno_editar_palavras = editar_lista_palavras_palavras(usuario_conta, lista_palavras) # editando as palavras da lista de palavras
-            if(retorno_editar_palavras == 'Palavra editada'): # caso a palavra seja editada
+            while(retorno_editar_palavras == 'Palavra editada'): # caso a palavra seja editada
                 os.system('cls' if os.name == 'nt' else 'clear') # limpando a tela
                 exibir_lista_palavras(lista_palavras) # exibindo a lista de palavras selecionada
                 print("Palavra editada com sucesso!\n") # informando ao usuário que a palavra foi editada
-            elif(retorno_editar_palavras == 'Cancelar edição'): # caso a edição da palavra seja cancelada
+                retorno_editar_palavras = editar_lista_palavras_palavras(usuario_conta, lista_palavras) # editando as palavras da lista de palavras
+            if(retorno_editar_palavras == 'Cancelar edição'): # caso a edição da palavra seja cancelada
                 os.system('cls' if os.name == 'nt' else 'clear') # limpando a tela
                 exibir_lista_palavras(lista_palavras) # exibindo a lista de palavras selecionada
                 continue # solicitando ao usuário que escolha uma nova opção de edição da lista de palavras
-        elif(opcao_escolhida == '3'): # caso o usuário escolha a opção "Voltar"
+        elif(opcao_escolhida == '3'): # caso o usuário escolha a opção "Adicionar palavra na lista de palavras"
+            retorno_adicionar_palavra = adicionar_palavra_lista_palavras(usuario_conta, lista_palavras) # adicionando uma palavra à lista de palavras
+            while(retorno_adicionar_palavra == 'Palavra adicionada'): # caso a palavra seja adicionada
+                os.system('cls' if os.name == 'nt' else 'clear') # limpando a tela
+                exibir_lista_palavras(lista_palavras) # exibindo a lista de palavras selecionada
+                print("Palavra adicionada com sucesso!\n") # informando ao usuário que a palavra foi adicionada
+                retorno_adicionar_palavra = adicionar_palavra_lista_palavras(usuario_conta, lista_palavras) # adicionando uma palavra à lista de palavras
+            if(retorno_adicionar_palavra == 'Cancelar adição'): # caso a adição da palavra seja cancelada
+                os.system('cls' if os.name == 'nt' else 'clear') # limpando a tela
+                exibir_lista_palavras(lista_palavras) # exibindo a lista de palavras selecionada
+                continue # solicitando ao usuário que escolha uma nova opção de edição da lista de palavras
+        elif(opcao_escolhida == '4'): # caso o usuário escolha a opção "Remover palavra da lista de palavras"
+            retorno_remover_palavra = remover_palavra_lista_palavras(usuario_conta, lista_palavras) # removendo uma palavra da lista de palavras
+            while(retorno_remover_palavra == 'Palavra removida'): # caso a palavra seja removida
+                if(len(lista_palavras["palavras"]) == 0): # caso não haja mais palavras na lista
+                    atualizar_lista_palavras(usuario_conta, lista_palavras, "remover lista_palavras") # removendo a lista de palavras
+                    return 'Lista vazia' # retornando que a lista de palavras está vazia
+                os.system('cls' if os.name == 'nt' else 'clear') # limpando a tela
+                exibir_lista_palavras(lista_palavras) # exibindo a lista de palavras selecionada
+                print("Palavra removida com sucesso!\n") # informando ao usuário que a palavra foi removida
+                retorno_remover_palavra = remover_palavra_lista_palavras(usuario_conta, lista_palavras) # removendo uma palavra da lista de palavras
+            if(retorno_remover_palavra == 'Cancelar remoção'): # caso a remoção da palavra seja cancelada
+                os.system('cls' if os.name == 'nt' else 'clear') # limpando a tela
+                exibir_lista_palavras(lista_palavras) # exibindo a lista de palavras selecionada
+                continue # solicitando ao usuário que escolha uma nova opção de edição da lista de palavras
+        elif(opcao_escolhida == '5'): # caso o usuário escolha a opção "Voltar"
             return 'Voltar' # voltando ao menu de escolha de listas de palavras
         else: # caso o usuário escolha uma opção inválida
             tentativas -= 1 # decrementando a quantidade de tentativas
@@ -247,7 +314,9 @@ def editar_lista_palavras(usuario_conta):
         return 'Cancelar edição' # cancelando a edição da lista de palavras
     if(lista_palavras_existe(usuario_conta, lista_nome)): # verificando se a lista de palavras existe
         retorno_editar_lista_palavras = editar_lista_palavras_selecionada(usuario_conta, lista_nome) # editando a lista de palavras selecionada
-        if(retorno_editar_lista_palavras == 'Cancelar edição'): # caso a edição da lista de palavras seja cancelada
+        if(retorno_editar_lista_palavras == 'Lista vazia'): # caso a lista de palavras esteja vazia
+            return 'Lista vazia' # retornando que a lista de palavras está vazia
+        elif(retorno_editar_lista_palavras == 'Cancelar edição'): # caso a edição da lista de palavras seja cancelada
             return 'Cancelar edição' # cancelando a edição da lista de palavras
         elif(retorno_editar_lista_palavras == 'Voltar'): # caso o usuário escolha a opção "Voltar"
             return # solicitanco ao usuário que escolha uma nova lista para editar
